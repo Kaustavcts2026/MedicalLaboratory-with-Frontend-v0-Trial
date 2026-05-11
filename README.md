@@ -15,6 +15,15 @@ A **microservices-based backend system** for managing the full lifecycle of a me
 - [API Documentation](#api-documentation)
 - [Security](#security)
 - [Project Structure](#project-structure)
+- [Frontend](#frontend)
+  - [Frontend Overview](#frontend-overview)
+  - [Frontend Technology Stack](#frontend-technology-stack)
+  - [Feature Modules](#feature-modules)
+  - [Routing](#routing)
+  - [Services & API Integration](#services--api-integration)
+  - [Authentication & Guards](#authentication--guards)
+  - [Frontend Project Structure](#frontend-project-structure)
+- [Scripts](#scripts)
 
 ---
 
@@ -247,7 +256,7 @@ Medical-Laboratory-System-2/
 │   ├── billing-service/             # Invoicing & payments
 │   ├── patient_service/             # Patient records
 │   └── Notification_service/        # Alerts & notifications
-└── frontend/                        # (Planned — not yet implemented)
+└── frontend/                        # Angular SPA (see Frontend section below)
 ```
 
 Each service follows a standard layered structure:
@@ -268,3 +277,207 @@ src/main/java/
 ---
 
 > Built as part of a distributed systems project demonstrating microservices design patterns including service discovery, centralized configuration, API gateway routing, inter-service communication with resilience, and database-per-service isolation.
+
+---
+
+## Frontend
+
+### Frontend Overview
+
+The frontend is a full-featured **Angular Single-Page Application (SPA)** that provides a role-aware UI for all three user types — Admin, Lab Technician, and Patient. It communicates exclusively with the backend through the **API Gateway** on port 8090, attaches a JWT Bearer token to every request, and enforces role-based access control entirely on the client side through Angular route guards.
+
+Key capabilities:
+- Role-specific dashboards with live stats
+- Patient self-service: place orders, view results, pay invoices
+- Lab Technician workflow: manage processing jobs, enter and approve results
+- Admin tools: user management, lab technician creation, system-wide broadcasts
+- Inventory and lab test catalog management
+- Real-time notification polling for patients
+- Dark/light theme toggle with persistence
+
+---
+
+### Frontend Technology Stack
+
+| Category | Technology |
+|---|---|
+| Framework | Angular 16.2.0 |
+| Language | TypeScript 5.1.3 |
+| UI Library | Angular Material 16.2.14 + Angular CDK |
+| Styling | SCSS |
+| Reactive Layer | RxJS ~7.8.0 |
+| Maps | Leaflet 1.9.4 |
+| PDF Export | html2canvas 1.4.1 + jsPDF 4.2.1 |
+| Build Tool | Angular CLI 16.2.16 |
+| Testing | Karma + Jasmine |
+| Dev Server | `ng serve` → `http://localhost:4200` |
+
+---
+
+### Feature Modules
+
+All feature modules are **lazy-loaded** — they are fetched only when the user navigates to their routes, keeping the initial bundle small.
+
+| Module | Route Prefix | Roles | Description |
+|---|---|---|---|
+| **Auth** | `/auth` | Public | Login and registration pages |
+| **Dashboard** | `/dashboard` | All | Role-aware overview: stats tiles, greeting, motivational taglines; Patient dashboard includes a scrolling lab image marquee |
+| **Patient** | `/patient` | PATIENT | Profile setup wizard (required before placing orders), view/edit profile, Leaflet map-based address picker |
+| **Order** | `/orders` | ADMIN, PATIENT | Browse all orders (ADMIN) or own orders (PATIENT), create new test orders with priority selection (ROUTINE / STAT), view order details and sample collection status |
+| **Lab Processing** | `/lab` | ADMIN, LAB_TECH, PATIENT | Lab technician job queue and lifecycle management, result entry, QC and approval; Patients view their own lab results and reports |
+| **Inventory** | `/inventory` | ADMIN, LAB_TECH | Inventory item management with stock adjustment, lab test catalog with create/edit forms |
+| **Billing** | `/billing` | All | Invoice listing (auto-filtered by patient), invoice detail view, payment processing (CREDIT_CARD, DEBIT_CARD, UPI) |
+| **Notifications** | `/notifications` | PATIENT | Notification panel with read/unread state; polled every 30 seconds in the background |
+| **Admin** | `/admin` | ADMIN | User listing, create Lab Technician accounts, broadcast system-wide notifications |
+
+---
+
+### Routing
+
+```
+/ → /dashboard
+
+/auth
+  ├── /login
+  └── /register
+
+/dashboard              [AuthGuard, ProfileCompleteGuard]
+
+/patient                [AuthGuard, RoleGuard: PATIENT]
+  ├── /setup
+  └── /profile
+
+/orders                 [AuthGuard, RoleGuard: ADMIN, PATIENT]
+  ├── /                 → order list
+  ├── /new              [RoleGuard: PATIENT]
+  └── /:id              → order detail
+
+/lab                    [AuthGuard, RoleGuard: ADMIN, LAB_TECH, PATIENT]
+  ├── /                 [ADMIN, LAB_TECH] → job queue
+  ├── /job/:id          [ADMIN, LAB_TECH]
+  ├── /result-entry/:sampleId  [LAB_TECH only]
+  ├── /results          [PATIENT only]  → own results
+  └── /report/:sampleId [ADMIN, LAB_TECH, PATIENT]
+
+/inventory              [AuthGuard, RoleGuard: ADMIN, LAB_TECH]
+  ├── /                 → inventory items
+  ├── /tests            → lab test catalog
+  ├── /tests/new
+  └── /tests/:id/edit
+
+/billing                [AuthGuard, ProfileCompleteGuard]
+  ├── /                 → invoice list
+  ├── /invoice/:id
+  └── /pay/:invoiceId
+
+/notifications          [AuthGuard, RoleGuard: PATIENT]
+
+/admin                  [AuthGuard, RoleGuard: ADMIN]
+  ├── /                 → user list
+  └── /create-lab-tech
+```
+
+---
+
+### Services & API Integration
+
+All API calls target the API Gateway at `http://localhost:8090` (configured in `src/environments/environment.ts`). The `JwtInterceptor` automatically attaches the Bearer token to every outgoing request.
+
+| Service | Key Endpoints Used |
+|---|---|
+| **AuthService** | `POST /auth/login`, `POST /auth/register` |
+| **PatientService** | `GET/POST/PUT /patient/profile`, `POST /patient/addProfile` |
+| **OrderService** | `GET/POST /orders/*`, `GET /tests`, `POST /orders/collectSample/:id` |
+| **LabProcessingService** | `GET/POST /api/jobs/*`, `POST /api/jobs/processing/:sampleId/result`, `PUT /api/jobs/processing/:sampleId/approve` |
+| **InventoryService** | `GET/POST /inventory`, `POST /inventory/adjust`, `GET/POST/PUT /tests/*` |
+| **BillingService** | `GET /invoices/*`, `POST /payments`, `GET /payments/:invoiceId` |
+| **AdminService** | `GET /admin/users`, `POST /admin/create-lab-tech`, `POST /notification/broadcast` |
+| **NotificationPollingService** | `GET /notification` (every 30 s), `PUT /notification/mark-all-read` |
+
+The `ErrorInterceptor` handles all HTTP errors globally — it extracts error messages from Spring's standard format as well as bean-validation field maps, displays toast notifications, and automatically logs the user out on a 401.
+
+---
+
+### Authentication & Guards
+
+| Guard | Purpose |
+|---|---|
+| `AuthGuard` | Blocks unauthenticated users; also checks token expiry on every activation |
+| `RoleGuard` | Reads `route.data.roles` and compares against the decoded JWT role; redirects to dashboard if unauthorized |
+| `ProfileCompleteGuard` | For PATIENT users — silently checks `/patient/profile`; redirects to `/patient/setup` if no profile exists (404/403/400) |
+
+JWT tokens are stored in `localStorage` under the key `medlab_token`. The frontend decodes the payload (`sub`, `role`, `exp`) client-side without a library. Token validation (expiry) is re-checked on every guarded route activation.
+
+---
+
+### Frontend Project Structure
+
+```
+frontend/
+├── src/
+│   ├── app/
+│   │   ├── core/
+│   │   │   ├── guards/          # AuthGuard, RoleGuard, ProfileCompleteGuard
+│   │   │   ├── interceptors/    # JwtInterceptor, ErrorInterceptor
+│   │   │   ├── models/          # AuthUser, UserRole, shared DTOs
+│   │   │   └── services/        # AuthService, NotificationPollingService,
+│   │   │                        # BreadcrumbService, ThemeService
+│   │   ├── features/
+│   │   │   ├── auth/
+│   │   │   ├── dashboard/
+│   │   │   ├── patient/
+│   │   │   ├── order/
+│   │   │   ├── lab-processing/
+│   │   │   ├── inventory/
+│   │   │   ├── billing/
+│   │   │   ├── notification/
+│   │   │   └── admin/
+│   │   ├── shared/
+│   │   │   ├── components/      # Navbar, Sidebar, Breadcrumb, SkeletonLoader,
+│   │   │   │                    # ConfirmDialog, ProfileFab, PageNotFound
+│   │   │   ├── pipes/           # StatusLabelPipe
+│   │   │   └── material/        # Re-exported Angular Material modules
+│   │   ├── app-routing.module.ts
+│   │   └── app.module.ts
+│   ├── assets/
+│   │   └── lab-images/          # img1–img10.jpg (dashboard marquee)
+│   ├── environments/
+│   │   ├── environment.ts       # apiBase: http://localhost:8090
+│   │   └── environment.prod.ts
+│   └── styles.scss
+├── angular.json
+└── package.json
+```
+
+Each feature module follows a consistent internal structure:
+
+```
+features/<module>/
+├── components/     # Page and sub-components
+├── services/       # HTTP service for this domain
+└── models/         # TypeScript interfaces and enums
+```
+
+---
+
+## Scripts
+
+Two startup paths are available depending on what is installed on the machine.
+
+**If Java, Maven, Node.js, Angular, and MySQL are already installed**, use the root scripts directly:
+
+```bat
+start-all.bat
+debug.bat
+stop-all.bat
+```
+
+**If Maven, npm, Angular, or MySQL are not installed**, start Docker Desktop first, then use the sandbox wrappers:
+
+```bat
+sandbox\start-original.bat
+sandbox\debug-original.bat
+sandbox\stop-original.bat
+```
+
+The sandbox wrappers provide a temporary environment (Dockerized MySQL, shims for `mvn` and `npm`) without requiring the full development toolchain to be installed. They call the same underlying project scripts internally.

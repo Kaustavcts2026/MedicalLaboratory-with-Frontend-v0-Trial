@@ -27,7 +27,9 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\frontend\" -Recurse -Filter \"*theme*\" -ErrorAction SilentlyContinue)",
       "Bash(Select-Object -First 20)",
       "Bash(grep -E \"\\\\.\\(html|ts\\)$\")",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical_Laboratory_Latest\\\\frontend\" -Recurse -Depth 2)",
+      "Bash(Select-Object -Property FullName, PSIsContainer)"
     ]
   }
 }
