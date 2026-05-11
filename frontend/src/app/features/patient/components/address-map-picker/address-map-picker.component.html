@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>
+  <mat-icon>location_on</mat-icon> Pick Address on Map
+</h2>
+
+<mat-dialog-content>
+  <!-- Search box -->
+  <div class="search-row">
+    <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+      <mat-label>Search for a place…</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [(ngModel)]="searchQuery" (input)="onSearchInput()" autocomplete="off" />
+      <mat-progress-spinner *ngIf="isSearching" matSuffix diameter="18" mode="indeterminate"></mat-progress-spinner>
+    </mat-form-field>
+
+    <!-- Autocomplete results -->
+    <div *ngIf="searchResults.length > 0" class="search-results">
+      <div *ngFor="let r of searchResults" class="search-result-item" (click)="selectResult(r)">
+        <mat-icon class="result-icon">place</mat-icon>
+        <span>{{ r.display_name }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div id="map-container"></div>
+
+  <!-- Selected address preview -->
+  <div *ngIf="selectedAddress" class="selected-address">
+    <mat-icon color="primary">check_circle</mat-icon>
+    <span>{{ selectedAddress }}</span>
+  </div>
+  <p *ngIf="!selectedAddress" class="hint text-muted">
+    Click anywhere on the map or use the search box to pick a location.
+  </p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cancel()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="!selectedAddress" (click)="confirm()">
+    <mat-icon>check</mat-icon> Use This Address
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,1 @@
+SELECT id, invoice_number, order_id, patient_id, amount, status, due_date FROM billing.invoices;

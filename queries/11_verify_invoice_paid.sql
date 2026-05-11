@@ -1,0 +1,1 @@
+SELECT invoice_number, amount, status FROM billing.invoices WHERE id = 1;

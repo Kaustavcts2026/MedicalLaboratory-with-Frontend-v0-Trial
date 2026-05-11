@@ -1,0 +1,5 @@
+.page-container { max-width: 640px; margin: 0 auto; }
+.page-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; h2 { margin: 0; font-size: 1.5rem; font-weight: 700; } }
+.loading-center { display: flex; justify-content: center; padding: 40px; }
+.form-row { display: flex; gap: 16px; .half-width { flex: 1; } }
+.action-row { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }

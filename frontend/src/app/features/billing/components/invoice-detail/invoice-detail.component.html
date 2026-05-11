@@ -1,0 +1,55 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/billing"><mat-icon>arrow_back</mat-icon></button>
+    <h2>Invoice Detail</h2>
+  </div>
+
+  <mat-card *ngIf="loading">
+    <mat-card-content>
+      <app-skeleton-loader type="list" [rows]="4"></app-skeleton-loader>
+    </mat-card-content>
+  </mat-card>
+
+  <ng-container *ngIf="!loading && invoice">
+    <mat-card class="invoice-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar color="primary">receipt_long</mat-icon>
+        <mat-card-title>{{ invoice.invoiceNumber }}</mat-card-title>
+        <mat-card-subtitle>
+          <span class="st-badge" [ngClass]="invoice.status === 'PAID' ? 'st--paid' : invoice.status === 'CANCELLED' ? 'st--cancelled' : 'st--pending'">
+            {{ invoice.status }}
+          </span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-grid">
+          <div class="detail-item"><span class="detail-label">Order ID</span><span>{{ invoice.orderId }}</span></div>
+          <div class="detail-item"><span class="detail-label">Patient ID</span><span>{{ invoice.patientId }}</span></div>
+          <div class="detail-item"><span class="detail-label">Amount</span><span class="amount">₹{{ invoice.amount }} {{ invoice.currency }}</span></div>
+          <div class="detail-item"><span class="detail-label">Due Date</span><span>{{ invoice.dueDate | date:'longDate' }}</span></div>
+          <div class="detail-item"><span class="detail-label">Created</span><span>{{ invoice.createdAt | date:'medium' }}</span></div>
+        </div>
+
+        <div class="action-row" *ngIf="invoice.status === 'PENDING' && (role === 'PATIENT' || role === 'ADMIN')">
+          <button mat-raised-button color="primary" (click)="pay()">
+            <mat-icon>payment</mat-icon> Pay Now
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <h3 class="section-title" *ngIf="payments.length > 0">Payment History</h3>
+    <mat-card *ngIf="payments.length > 0" class="payments-card">
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item *ngFor="let p of payments">
+            <mat-icon matListItemIcon color="primary">check_circle</mat-icon>
+            <div matListItemTitle>₹{{ p.amount }} via {{ p.paymentMethod }}</div>
+            <div matListItemLine class="text-muted">{{ p.paidAt | date:'medium' }} · TxID: {{ p.transactionId }}</div>
+            <span class="st-badge st--paid" matListItemMeta>{{ p.paymentStatus }}</span>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+</div>

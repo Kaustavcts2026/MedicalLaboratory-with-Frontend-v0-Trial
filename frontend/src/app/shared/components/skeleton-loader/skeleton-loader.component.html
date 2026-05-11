@@ -1,0 +1,33 @@
+<ng-container [ngSwitch]="type">
+
+  <!-- TABLE skeleton -->
+  <div *ngSwitchCase="'table'" class="sk-table">
+    <div class="sk-header">
+      <div *ngFor="let c of colArray" class="sk-cell skeleton-shimmer"></div>
+    </div>
+    <div *ngFor="let r of rowArray" class="sk-row">
+      <div *ngFor="let c of colArray" class="sk-cell skeleton-shimmer"></div>
+    </div>
+  </div>
+
+  <!-- CARD skeleton -->
+  <div *ngSwitchCase="'card'" class="sk-cards">
+    <div *ngFor="let r of rowArray" class="sk-card-item">
+      <div class="sk-card-line sk-line-title skeleton-shimmer"></div>
+      <div class="sk-card-line sk-line-sub skeleton-shimmer"></div>
+      <div class="sk-card-line sk-line-sm skeleton-shimmer"></div>
+    </div>
+  </div>
+
+  <!-- LIST skeleton -->
+  <div *ngSwitchCase="'list'" class="sk-list">
+    <div *ngFor="let r of rowArray" class="sk-list-item">
+      <div class="sk-avatar skeleton-shimmer"></div>
+      <div class="sk-list-lines">
+        <div class="sk-line-title skeleton-shimmer"></div>
+        <div class="sk-line-sub skeleton-shimmer"></div>
+      </div>
+    </div>
+  </div>
+
+</ng-container>

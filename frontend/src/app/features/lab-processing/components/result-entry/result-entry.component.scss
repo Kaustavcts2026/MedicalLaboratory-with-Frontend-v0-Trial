@@ -1,0 +1,42 @@
+.page-container { max-width: 720px; margin: 0 auto; }
+.page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; h2 { margin: 0; font-size: 1.5rem; font-weight: 700; } }
+.hint { margin-bottom: 16px; }
+.action-row { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; align-items: center; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.detail-item { display: flex; flex-direction: column; gap: 4px; }
+.detail-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .5px; color: var(--text-secondary); }
+.detail-value { font-size: 1rem; font-weight: 500; }
+.info-content { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+
+.result-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  .field-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    .field-key {
+      flex: 1;
+    }
+    .field-value {
+      flex: 1.5;
+    }
+    .remove-btn {
+      margin-top: 8px;
+      color: #d32f2f;
+    }
+  }
+
+  .add-field-btn {
+    align-self: flex-start;
+  }
+}
+
+::ng-deep .action-row button.mat-mdc-progress-spinner {
+  display: inline-flex;
+  margin-right: 8px;
+}

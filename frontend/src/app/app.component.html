@@ -1,0 +1,27 @@
+<ng-container *ngIf="showShell$ | async; else publicLayout">
+  <div class="app-shell">
+    <app-navbar (toggleSidebar)="sidebarOpen = !sidebarOpen"></app-navbar>
+    <mat-progress-bar *ngIf="isNavigating" mode="indeterminate" class="nav-progress-bar"></mat-progress-bar>
+
+    <div class="shell-body">
+      <!-- Sidebar backdrop -->
+      <div class="sidebar-overlay" *ngIf="sidebarOpen" (click)="sidebarOpen = false"></div>
+
+      <!-- Slide-out sidebar -->
+      <app-sidebar [open]="sidebarOpen" (close)="sidebarOpen = false"></app-sidebar>
+
+      <!-- Main page content -->
+      <main class="page-content">
+        <app-breadcrumb></app-breadcrumb>
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+
+  <!-- Bottom-right profile FAB -->
+  <app-profile-fab></app-profile-fab>
+</ng-container>
+
+<ng-template #publicLayout>
+  <router-outlet></router-outlet>
+</ng-template>

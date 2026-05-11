@@ -1,0 +1,143 @@
+<div class="page-container">
+  <div class="page-header">
+    <mat-icon color="primary">manage_accounts</mat-icon>
+    <h2>User Management</h2>
+    <span class="spacer"></span>
+    <button mat-raised-button color="primary" (click)="goCreateLabTech()">
+      <mat-icon>person_add</mat-icon> Add Lab Technician
+    </button>
+  </div>
+
+  <mat-card *ngIf="loading" class="table-card">
+    <mat-card-content>
+      <app-skeleton-loader type="table" [rows]="7" [cols]="3"></app-skeleton-loader>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card [hidden]="loading" class="table-card">
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search users</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput #userFilter (input)="applyFilter($event)" placeholder="Username, role…" />
+        <button *ngIf="userFilter.value" mat-icon-button matSuffix matTooltip="Clear"
+          (click)="userFilter.value = ''; clearFilter()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <table mat-table [dataSource]="dataSource" matSort class="full-width">
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+          <td mat-cell *matCellDef="let u">{{ u.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
+          <td mat-cell *matCellDef="let u">
+            <div class="user-cell">
+              <mat-icon class="user-avatar">account_circle</mat-icon>
+              <strong>{{ u.username }}</strong>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Role</th>
+          <td mat-cell *matCellDef="let u">
+            <mat-chip-set>
+              <mat-chip [color]="roleColor(u.role)" highlighted>{{ u.role }}</mat-chip>
+            </mat-chip-set>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">No users found.</td>
+        </tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Inventory Overview (read-only) -->
+  <mat-card class="add-inventory-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar color="primary">inventory_2</mat-icon>
+      <mat-card-title>Inventory Overview</mat-card-title>
+      <mat-card-subtitle>Current stock levels — use the Inventory page to add or adjust items</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="invLoading" style="text-align:center;padding:16px;">
+        <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+      </div>
+      <ng-container *ngIf="!invLoading">
+        <p *ngIf="inventoryItems.length === 0" class="text-muted" style="padding:8px 0;">
+          No inventory items found.
+        </p>
+        <table mat-table [dataSource]="inventoryItems" *ngIf="inventoryItems.length > 0" class="full-width">
+          <ng-container matColumnDef="itemName">
+            <th mat-header-cell *matHeaderCellDef>Item</th>
+            <td mat-cell *matCellDef="let item">{{ item.itemName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>Stock</th>
+            <td mat-cell *matCellDef="let item">{{ item.quantity }} {{ item.unit }}</td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let item">
+              <mat-chip-set>
+                <mat-chip *ngIf="item.lowStock" color="warn" highlighted>Low Stock</mat-chip>
+                <mat-chip *ngIf="!item.lowStock" color="primary" highlighted>OK</mat-chip>
+              </mat-chip-set>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="invColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: invColumns;"></tr>
+        </table>
+      </ng-container>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" routerLink="/inventory">
+        <mat-icon>open_in_new</mat-icon> Manage Inventory
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- G12: Broadcast Notification Panel -->
+  <mat-card class="broadcast-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar color="accent">campaign</mat-icon>
+      <mat-card-title>Broadcast Notification</mat-card-title>
+      <mat-card-subtitle>Send a message to all patients in the system</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Message</mat-label>
+        <textarea matInput [formControl]="broadcastMessage" rows="3"
+          placeholder="e.g. System maintenance scheduled for Sunday 2am–4am."></textarea>
+        <mat-error *ngIf="broadcastMessage.hasError('required')">Message is required</mat-error>
+        <mat-error *ngIf="broadcastMessage.hasError('minlength')">Message must be at least 5 characters</mat-error>
+      </mat-form-field>
+      <div class="broadcast-actions">
+        <button mat-raised-button color="accent"
+          [disabled]="broadcastMessage.invalid || broadcasting"
+          (click)="sendBroadcast()">
+          <span *ngIf="broadcasting">
+            <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+            Sending...
+          </span>
+          <span *ngIf="!broadcasting">
+            <mat-icon>send</mat-icon>
+            Send to All Patients
+          </span>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

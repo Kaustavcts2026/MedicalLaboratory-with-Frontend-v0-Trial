@@ -1,0 +1,165 @@
+<div class="profile-page">
+  <div class="page-header">
+    <h2>My Profile</h2>
+    <button *ngIf="!editMode && !loading" mat-stroked-button color="primary" (click)="editMode = true">
+      <mat-icon>edit</mat-icon> Edit Profile
+    </button>
+  </div>
+
+  <mat-card *ngIf="loading" class="profile-card">
+    <mat-card-content>
+      <app-skeleton-loader type="list" [rows]="5"></app-skeleton-loader>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- View mode -->
+  <mat-card *ngIf="!loading && profile && !editMode" class="profile-card">
+    <mat-card-content>
+      <div class="profile-avatar">
+        <div class="avatar-wrap">
+          <img *ngIf="avatarUrl" [src]="avatarUrl" class="avatar-img" alt="Profile picture" />
+          <mat-icon *ngIf="!avatarUrl" class="avatar-icon">account_circle</mat-icon>
+        </div>
+        <div class="avatar-info">
+          <h3>{{ profile.firstName }} {{ profile.lastName }}</h3>
+          <span class="text-muted">@{{ profile.username }}</span>
+          <button *ngIf="avatarUrl" mat-button color="warn" class="remove-avatar-btn" (click)="removeAvatar()" matTooltip="Remove profile picture">
+            <mat-icon>delete</mat-icon> Remove photo
+          </button>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Age</span>
+          <span class="info-value">{{ profile.age }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Gender</span>
+          <span class="info-value">{{ profile.gender }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ profile.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Phone</span>
+          <span class="info-value">{{ profile.phoneNumber }}</span>
+        </div>
+        <div class="info-item full-span">
+          <span class="info-label">Address</span>
+          <span class="info-value">{{ profile.address }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Edit mode -->
+  <mat-card *ngIf="!loading && editMode" class="profile-card">
+    <mat-card-header>
+      <mat-card-title>Edit Profile</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Avatar upload -->
+      <div class="avatar-edit-wrap">
+        <div class="avatar-wrap">
+          <img *ngIf="avatarUrl" [src]="avatarUrl" class="avatar-img" alt="Profile picture" />
+          <mat-icon *ngIf="!avatarUrl" class="avatar-icon">account_circle</mat-icon>
+          <button mat-mini-fab type="button" class="avatar-pencil-btn" (click)="fileInput.click()" matTooltip="Change photo">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+        <input #fileInput type="file" accept="image/jpeg,image/png,image/gif,image/webp" hidden (change)="onAvatarSelected($event)" />
+        <div class="avatar-edit-actions">
+          <button mat-stroked-button type="button" (click)="fileInput.click()">
+            <mat-icon>photo_camera</mat-icon> {{ avatarUrl ? 'Change photo' : 'Upload photo' }}
+          </button>
+          <button *ngIf="avatarUrl" mat-stroked-button color="warn" type="button" (click)="removeAvatar()">
+            <mat-icon>delete</mat-icon> Remove
+          </button>
+        </div>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" />
+            <mat-error *ngIf="form.get('firstName')?.hasError('required')">Required</mat-error>
+            <mat-error *ngIf="form.get('firstName')?.hasError('pattern')">Letters only</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" />
+            <mat-error *ngIf="form.get('lastName')?.hasError('required')">Required</mat-error>
+            <mat-error *ngIf="form.get('lastName')?.hasError('pattern')">Letters only</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Age</mat-label>
+            <input matInput type="text" inputmode="numeric" maxlength="3" formControlName="age" (input)="onAgeInput($event)" />
+            <mat-error *ngIf="form.get('age')?.hasError('required')">Required</mat-error>
+            <mat-error *ngIf="form.get('age')?.hasError('patientAge')">Enter an age from 1 to 120</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Gender</mat-label>
+            <mat-select formControlName="gender">
+              <mat-option value="Male">Male</mat-option>
+              <mat-option value="Female">Female</mat-option>
+              <mat-option value="Other">Other</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" />
+          <mat-error *ngIf="form.get('email')?.hasError('required')">Required</mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('patientEmail')">Enter a valid email with a domain</mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('emailDomainTypo')">
+            Check the domain. Did you mean {{ form.get('email')?.getError('emailDomainTypo') }}?
+          </mat-error>
+        </mat-form-field>
+        <div class="phone-row">
+          <mat-form-field appearance="outline" class="country-code-field">
+            <mat-label>Code</mat-label>
+            <mat-select formControlName="countryCode">
+              <mat-option *ngFor="let c of countryCodes" [value]="c.code">
+                {{ c.flag }} {{ c.code }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="phone-field">
+            <mat-label>Phone Number</mat-label>
+            <mat-icon matPrefix>phone</mat-icon>
+            <input matInput formControlName="phoneNumber" inputmode="numeric"
+                   (input)="onPhoneInput($event)" maxlength="10" />
+            <mat-error *ngIf="form.get('phoneNumber')?.hasError('required')">Required</mat-error>
+            <mat-error *ngIf="form.get('phoneNumber')?.hasError('pattern')">Enter 10-digit number</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="address-row">
+          <mat-form-field appearance="outline" class="address-field">
+            <mat-label>Address</mat-label>
+            <mat-icon matPrefix>location_on</mat-icon>
+            <textarea matInput formControlName="address" rows="2"></textarea>
+            <mat-error *ngIf="form.get('address')?.hasError('required')">Required</mat-error>
+          </mat-form-field>
+          <button mat-stroked-button type="button" class="map-btn" (click)="openMapPicker()" matTooltip="Pick on map">
+            <mat-icon>location_on</mat-icon>
+          </button>
+        </div>
+        <div class="action-row">
+          <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="saving">
+            <span *ngIf="saving">
+              <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+              Saving...
+            </span>
+            <span *ngIf="!saving">Save Changes</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

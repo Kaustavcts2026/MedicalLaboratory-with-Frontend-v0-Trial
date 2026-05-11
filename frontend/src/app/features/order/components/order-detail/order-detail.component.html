@@ -1,0 +1,67 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button (click)="location.back()"><mat-icon>arrow_back</mat-icon></button>
+    <h2>Order Details</h2>
+  </div>
+
+  <mat-card *ngIf="loading">
+    <mat-card-content>
+      <app-skeleton-loader type="list" [rows]="4"></app-skeleton-loader>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="!loading && order">
+    <mat-card-content>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Order Number</span>
+          <span class="detail-value"><strong>{{ order.orderNumber }}</strong></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <span class="detail-value">
+            <span class="status-badge" [ngClass]="statusColor(order.status)">{{ order.status | statusLabel }}</span>
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Priority</span>
+          <span class="detail-value">
+            <span class="priority-badge" [ngClass]="'priority--' + order.priority?.toLowerCase()">{{ order.priority | statusLabel }}</span>
+          </span>
+        </div>
+        <div class="detail-item" *ngIf="order.sampleId">
+          <span class="detail-label">Sample ID</span>
+          <span class="detail-value">#{{ order.sampleId }}</span>
+        </div>
+        <div class="detail-item" *ngIf="order.testIds?.length">
+          <span class="detail-label">Tests Ordered</span>
+          <span class="detail-value">
+            <span *ngFor="let id of order.testIds; let last = last">
+              {{ testName(id) }}<span *ngIf="!last">, </span>
+            </span>
+          </span>
+        </div>
+        <div class="detail-item" *ngIf="order.message">
+          <span class="detail-label">Note</span>
+          <span class="detail-value">{{ order.message }}</span>
+        </div>
+      </div>
+
+      <div class="action-row" *ngIf="role === 'ADMIN' && order.status === 'CREATED'">
+        <button mat-raised-button color="primary" (click)="collectSample()">
+          <mat-icon>colorize</mat-icon> Collect Sample
+        </button>
+      </div>
+
+      <div class="action-row" *ngIf="role === 'PATIENT' && order.sampleId">
+        <button mat-stroked-button color="primary" [routerLink]="['/lab/report', order.sampleId]">
+          <mat-icon>article</mat-icon> View Lab Report
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="!loading && !order">
+    <mat-card-content class="no-data">{{ errorMessage || 'Order not found.' }}</mat-card-content>
+  </mat-card>
+</div>

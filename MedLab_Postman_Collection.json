@@ -1,0 +1,373 @@
+{
+  "info": {
+    "name": "MedLab Microservices — Full Test Suite",
+    "_postman_id": "medlab-collection-2026",
+    "description": "Complete end-to-end test suite for MedLab Microservices. Steps: Register → Login (tokens auto-saved) → Add Lab Test → Happy Path (5.1–5.10). Edge cases and resilience tests excluded.\n\nBase URL: http://localhost:8090\n\nTokens are auto-saved to collection variables after each Login request.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",       "value": "http://localhost:8090", "type": "string" },
+    { "key": "adminToken",    "value": "",                      "type": "string" },
+    { "key": "labtechToken",  "value": "",                      "type": "string" },
+    { "key": "patientToken",  "value": "",                      "type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "Step 3A — Register Users",
+      "item": [
+        {
+          "name": "Register Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin@lab.com\",\n  \"password\": \"Admin123\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register Lab Technician",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"labtech@lab.com\",\n  \"password\": \"Technician123\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register Patient",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"patient@lab.com\",\n  \"password\": \"Patient123\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+
+    {
+      "name": "Step 3B — Assign Roles (SQL only — no API)",
+      "description": "Run in MySQL Workbench:\n\nUPDATE auth_db.users SET role = 'ADMIN'    WHERE username = 'admin@lab.com';\nUPDATE auth_db.users SET role = 'LAB_TECH' WHERE username = 'labtech@lab.com';\nSELECT username, role FROM auth_db.users;",
+      "item": []
+    },
+
+    {
+      "name": "Step 4 — Login & Get Tokens",
+      "item": [
+        {
+          "name": "Login Admin  →  saves adminToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) {",
+                  "    pm.collectionVariables.set('adminToken', json.token);",
+                  "    console.log('adminToken saved');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin@lab.com\",\n  \"password\": \"Admin123\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Lab Technician  →  saves labtechToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) {",
+                  "    pm.collectionVariables.set('labtechToken', json.token);",
+                  "    console.log('labtechToken saved');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"labtech@lab.com\",\n  \"password\": \"Technician123\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Patient  →  saves patientToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) {",
+                  "    pm.collectionVariables.set('patientToken', json.token);",
+                  "    console.log('patientToken saved');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"patient@lab.com\",\n  \"password\": \"Patient123\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+
+    {
+      "name": "Step 3C — Add Lab Test (Admin)",
+      "item": [
+        {
+          "name": "Add CBC Lab Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/tests", "host": ["{{baseUrl}}"], "path": ["tests"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"CBC\",\n  \"name\": \"Complete Blood Count\",\n  \"price\": 45.00,\n  \"turnaroundHours\": 24,\n  \"description\": \"Full blood panel\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+
+    {
+      "name": "Step 5 — End-to-End Happy Path",
+      "item": [
+
+        {
+          "name": "5.1 — Create Patient Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/patient/addProfile", "host": ["{{baseUrl}}"], "path": ["patient","addProfile"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"age\": 35,\n  \"gender\": \"MALE\",\n  \"phoneNumber\": \"9876543210\",\n  \"email\": \"john@example.com\",\n  \"address\": \"123 Main Street\"\n}"
+            }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.2 — Place Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/orders/addOrder", "host": ["{{baseUrl}}"], "path": ["orders","addOrder"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tests\": [1],\n  \"requestedBy\": 1,\n  \"priority\": \"ROUTINE\"\n}"
+            }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.3 — Collect Sample (orderId=1, collectedBy=1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/collectSample/1?collectedBy=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders","collectSample","1"],
+              "query": [{ "key": "collectedBy", "value": "1" }]
+            }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.3 (verify) — View Order Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/orders/viewOrder/1", "host": ["{{baseUrl}}"], "path": ["orders","viewOrder","1"] }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.4 — Start Processing (jobId=1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{labtechToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/jobs/1/start", "host": ["{{baseUrl}}"], "path": ["api","jobs","1","start"] }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.5 — Mark QC Pending (jobId=1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{labtechToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/jobs/1/qc", "host": ["{{baseUrl}}"], "path": ["api","jobs","1","qc"] }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.6 — Enter Test Result (jobId=1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{labtechToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/jobs/processing/1/result", "host": ["{{baseUrl}}"], "path": ["api","jobs","processing","1","result"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"testId\": 1,\n  \"result\": \"{\\\"value\\\":5.6,\\\"unit\\\":\\\"mg/dL\\\"}\",\n  \"enteredBy\": 1\n}"
+            }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.7 — Approve Result (triggers billing chain)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/jobs/processing/1/approve", "host": ["{{baseUrl}}"], "path": ["api","jobs","processing","1","approve"] }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.7 (verify) — Get Notifications (patient sees INVOICE_GENERATED)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/notification", "host": ["{{baseUrl}}"], "path": ["notification"] }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.8 — View Invoice (invoiceId=1)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/invoices/1", "host": ["{{baseUrl}}"], "path": ["invoices","1"] }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.9 — Make Payment (UPI, invoiceId=1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/payments", "host": ["{{baseUrl}}"], "path": ["payments"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": 1,\n  \"paymentMethod\": \"UPI\",\n  \"amount\": 45.00\n}"
+            }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.10 — Double Payment Guard (expect 422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/payments", "host": ["{{baseUrl}}"], "path": ["payments"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoiceId\": 1,\n  \"paymentMethod\": \"CREDIT_CARD\",\n  \"amount\": 45.00\n}"
+            }
+          },
+          "response": []
+        },
+
+        {
+          "name": "5.9 (final verify) — Get All Notifications (patient sees 3: INVOICE_GENERATED + PAYMENT_SUCCESS + LAB_RESULT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{patientToken}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/notification", "host": ["{{baseUrl}}"], "path": ["notification"] }
+          },
+          "response": []
+        }
+
+      ]
+    }
+
+  ]
+}

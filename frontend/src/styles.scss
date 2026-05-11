@@ -1,0 +1,409 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// ── Palettes ────────────────────────────────────────────────────────────────
+$primary:  mat.define-palette(mat.$blue-palette, 700, 300, 900);
+$accent:   mat.define-palette(mat.$teal-palette, A200, A100, A400);
+$warn:     mat.define-palette(mat.$red-palette);
+
+// ── Themes ──────────────────────────────────────────────────────────────────
+$light-theme: mat.define-light-theme((
+  color: (primary: $primary, accent: $accent, warn: $warn),
+  typography: mat.define-typography-config()
+));
+
+$dark-theme: mat.define-dark-theme((
+  color: (primary: $primary, accent: $accent, warn: $warn),
+  typography: mat.define-typography-config()
+));
+
+@include mat.all-component-themes($light-theme);
+
+.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+}
+
+// ── CSS Custom Properties ────────────────────────────────────────────────────
+:root {
+  // Backgrounds
+  --bg-page:        #f4f6f9;
+  --bg-card:        #ffffff;
+  --bg-sidebar:     #1a237e;
+  --bg-input:       #f8f9fa;
+
+  // Text
+  --text-sidebar:   #e8eaf6;
+  --text-primary:   #212121;
+  --text-secondary: #616161;
+
+  // Borders & shadows
+  --border-color:      #e0e0e0;
+  --shadow:            0 2px 8px rgba(0,0,0,.12);
+  --shadow-elevated:   0 8px 32px rgba(0,0,0,.14);
+
+  // Brand / semantic colours — single source of truth
+  // All component SCSSes should use these instead of hardcoded hex.
+  --color-primary:  #1565c0;
+  --color-accent:   #00838f;
+  --color-success:  #2e7d32;
+  --color-warn:     #e65100;
+  --color-error:    #c62828;
+  --color-purple:   #6a1b9a;
+
+  // Layout
+  --navbar-height:  64px;
+
+  // ── Standardised page-container widths ───────────────────────────────────
+  --page-width-list:    1100px;   // data-table / list pages
+  --page-width-detail:  720px;    // detail / edit pages
+  --page-width-form:    620px;    // standalone forms (payment, profile-setup)
+  --page-width-narrow:  480px;    // confirmations, single-card pages
+
+  // ── Loading helpers ───────────────────────────────────────────────────────
+  --loading-padding:  60px;       // padding inside .loading-center
+  --spinner-page:     48px;       // page-level spinner diameter
+  --spinner-inline:   20px;       // button / inline spinner diameter
+
+  // ── Border radii ──────────────────────────────────────────────────────────
+  --radius-card:    12px;
+  --radius-button:  8px;
+  --radius-badge:   12px;
+  --radius-chip:    20px;
+}
+
+.dark-theme {
+  --bg-page:        #080808;
+  --bg-card:        #0e0e0e;
+  --bg-sidebar:     #0d0d0d;
+  --bg-input:       #1a1a1a;
+  --text-sidebar:   #e0e0e0;
+  --text-primary:   #e0e0e0;
+  --text-secondary: #9e9e9e;
+  --border-color:   #2e2e2e;
+  --shadow:         0 2px 8px rgba(0,0,0,.5);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,.6);
+
+  // Material form-field fill (MDC) — darker than the default elevated grey
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: #242424 !important;
+  }
+  .mdc-text-field--filled.mdc-text-field--disabled {
+    background-color: #1e1e1e !important;
+  }
+
+  // Select panel / dropdown overlay
+  .mat-mdc-select-panel,
+  .mat-mdc-autocomplete-panel {
+    background: #202020 !important;
+  }
+
+  // Table rows
+  .mat-mdc-row,
+  .mat-mdc-header-row,
+  .mat-mdc-footer-row {
+    background: var(--bg-card) !important;
+  }
+  .mat-mdc-row:hover .mat-mdc-cell {
+    background: #222222 !important;
+  }
+}
+
+// ── Smooth Dark/Light Transition ─────────────────────────────────────────────
+body.theme-transitioning,
+body.theme-transitioning *,
+body.theme-transitioning *::before,
+body.theme-transitioning *::after {
+  transition:
+    background-color 0.5s ease,
+    background       0.5s ease,
+    color            0.45s ease,
+    border-color     0.45s ease,
+    fill             0.45s ease,
+    box-shadow       0.45s ease,
+    filter           0.45s ease !important;
+}
+
+// ── Base ─────────────────────────────────────────────────────────────────────
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+}
+
+// Hide scrollbars everywhere — scroll still works, bar is just invisible
+* {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge legacy */
+
+  &::-webkit-scrollbar {
+    display: none;              /* Chrome, Safari, new Edge */
+  }
+}
+
+// ── Shell Layout ─────────────────────────────────────────────────────────────
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.shell-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background-color: var(--bg-page);
+
+  @media (max-width: 600px) { padding: 12px; }
+}
+
+// ── Route-transition progress bar ────────────────────────────────────────────
+.nav-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 3px !important;
+}
+
+// ── Overlay (sidebar backdrop) ───────────────────────────────────────────────
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .45);
+  backdrop-filter: blur(2px);
+  z-index: 199;
+}
+
+// Dark mode: the page bg is near-black so raise the overlay opacity + keep blur
+body.dark-theme .sidebar-overlay {
+  background: rgba(0, 0, 0, .70);
+}
+
+// ── Material overrides ───────────────────────────────────────────────────────
+.mat-card {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow) !important;
+  border-radius: var(--radius-card) !important;
+}
+
+// ── Snackbar panel classes (UX 10) ───────────────────────────────────────────
+// Usage: snack.open(msg, 'Close', { panelClass: 'snack-success' })
+.snack-success .mdc-snackbar__surface { background: #2e7d32 !important; color: #fff !important; }
+.snack-error   .mdc-snackbar__surface { background: #c62828 !important; color: #fff !important; }
+.snack-info    .mdc-snackbar__surface { background: #1565c0 !important; color: #fff !important; }
+.snack-warn    .mdc-snackbar__surface { background: #e65100 !important; color: #fff !important; }
+
+// Legacy selector kept for backwards compat
+.snack-error .mat-snack-bar-container { background: #c62828; color: #fff; }
+
+// ── Dark-mode colour overrides ────────────────────────────────────────────────
+body.dark-theme {
+  .mat-mdc-card,
+  .mat-mdc-table,
+  .mat-mdc-paginator,
+  .mat-mdc-dialog-container .mdc-dialog__surface,
+  .mat-expansion-panel,
+  .mat-mdc-menu-panel {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-card-subtitle,
+  .mat-mdc-card-content,
+  .mat-mdc-cell,
+  .mat-mdc-header-cell,
+  .mat-mdc-paginator,
+  .mat-mdc-menu-item,
+  .mat-mdc-option,
+  .mat-mdc-select-value,
+  .mat-mdc-input-element,
+  .mat-mdc-form-field,
+  .mat-mdc-dialog-content {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-form-field-hint,
+  .mat-mdc-card-subtitle,
+  .text-muted,
+  .mat-mdc-paginator-range-label {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-mdc-row:hover .mat-mdc-cell,
+  .mat-mdc-option:hover:not(.mdc-list-item--disabled),
+  .mat-mdc-menu-item:hover {
+    background: #161616 !important;
+  }
+
+  // ── Lab-job status badges ──────────────────────────────────────────────
+  .st--created    { background: #1a1440 !important; color: #b39ddb !important; }
+  .st--received   { background: #0d2744 !important; color: #90caf9 !important; }
+  .st--processing { background: #2d1247 !important; color: #ce93d8 !important; }
+  .st--qc         { background: #3d2000 !important; color: #ffb74d !important; }
+  .st--done       { background: #0d2e10 !important; color: #a5d6a7 !important; }
+  .st--entered    { background: #00312b !important; color: #80cbc4 !important; }
+  .st--cancelled  { background: #3d0a12 !important; color: #ef9a9a !important; }
+
+  // ── Order status badges ────────────────────────────────────────────────
+  .status--pending   { background: #3d2000 !important; color: #ffcc80 !important; }
+  .status--collected { background: #0d2e10 !important; color: #a5d6a7 !important; }
+  .status--cancelled { background: #3d0a12 !important; color: #ef9a9a !important; }
+
+  // ── Order priority badges ──────────────────────────────────────────────
+  .priority--routine { background: #0d2e10 !important; color: #a5d6a7 !important; }
+  .priority--urgent  { background: #3d2000 !important; color: #ffcc80 !important; }
+  .priority--stat    { background: #3d0a12 !important; color: #ef9a9a !important; }
+
+  // ── Billing invoice status badges ─────────────────────────────────────
+  .st--pending   { background: #3d2000 !important; color: #ffcc80 !important; }
+  .st--paid      { background: #0d2e10 !important; color: #a5d6a7 !important; }
+
+  // ── Inventory / misc stock badges ─────────────────────────────────────
+  .badge--ok   { background: #0d2e10 !important; color: #a5d6a7 !important; }
+  .badge--warn { background: #3d2000 !important; color: #ffcc80 !important; }
+
+  // ── Notification accent row ────────────────────────────────────────────
+  .notif-lab-result { background: rgba(0,150,136,.15) !important; }
+
+  // ── Stat-tile & quick-action icon wraps ───────────────────────────────
+  .stat-icon-wrap,
+  .quick-icon-wrap { filter: brightness(0.55) !important; }
+
+  // ── Auth panels ───────────────────────────────────────────────────────────
+  .auth-branding {
+    background: linear-gradient(145deg, #070f1f 0%, #0a1628 40%, #0c1a30 100%) !important;
+    border-right-color: #1a2a40 !important;
+  }
+  .auth-form-side {
+    background: linear-gradient(155deg, #020b1e 0%, #030f2a 100%) !important;
+  }
+}
+
+// ── Button loading-state alignment ───────────────────────────────────────────
+.mat-mdc-raised-button,
+.mat-mdc-flat-button,
+.mat-mdc-stroked-button,
+.mat-mdc-button {
+  .mdc-button__label,
+  .mdc-button__label > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
+// ── Skeleton shimmer animation ────────────────────────────────────────────────
+@keyframes skeleton-shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--border-color) 25%,
+    rgba(255,255,255,.5) 50%,
+    var(--border-color) 75%
+  );
+  background-size: 1200px 100%;
+  animation: skeleton-shimmer 1.4s infinite linear;
+  border-radius: 4px;
+}
+
+body.dark-theme .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #1e1e1e 25%,
+    #2a2a2a 50%,
+    #1e1e1e 75%
+  );
+  background-size: 1200px 100%;
+}
+
+// ── Global table enhancements (UX 4) ─────────────────────────────────────────
+// Applied via class="clickable-table" on mat-table.
+// Rows get cursor:pointer, full-row ripple, and hover reveal for the actions col.
+
+.table-wrap {
+  overflow-x: auto;           // horizontal scroll on small screens
+  border-radius: var(--radius-card);
+}
+
+.clickable-table {
+  .mat-mdc-header-row {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg-card) !important;
+    box-shadow: 0 1px 0 var(--border-color);
+  }
+
+  .clickable-row {
+    cursor: pointer;
+    transition: background 0.12s ease;
+
+    &:hover .mat-mdc-cell {
+      background: rgba(21, 101, 192, 0.05) !important;
+    }
+  }
+
+  // Actions column: icons only visible on row hover
+  .actions-cell {
+    .mat-mdc-icon-button {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+  }
+
+  .clickable-row:hover .actions-cell .mat-mdc-icon-button {
+    opacity: 1;
+  }
+
+  // Always-visible on touch devices (no hover state)
+  @media (hover: none) {
+    .actions-cell .mat-mdc-icon-button { opacity: 1; }
+  }
+}
+
+body.dark-theme .clickable-table .clickable-row:hover .mat-mdc-cell {
+  background: rgba(21, 101, 192, 0.10) !important;
+}
+
+// ── Global no-data row ────────────────────────────────────────────────────────
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 24px;
+  color: var(--text-secondary);
+  font-size: .9rem;
+
+  mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    opacity: .5;
+  }
+}
+
+// ── Utility ──────────────────────────────────────────────────────────────────
+.spacer    { flex: 1 1 auto; }
+.text-muted { color: var(--text-secondary); }
+.full-width { width: 100%; }
+.truncate   { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.no-wrap    { white-space: nowrap; }

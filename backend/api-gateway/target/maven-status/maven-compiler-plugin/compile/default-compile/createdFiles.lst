@@ -1,0 +1,6 @@
+com\medlab\gateway\config\RouteLocatorConfig.class
+com\medlab\gateway\ApiGatewayApplication.class
+com\medlab\gateway\config\SwaggerConfig.class
+com\medlab\gateway\config\CorsConfig.class
+com\medlab\gateway\config\GatewaySecurityConfig.class
+com\medlab\gateway\filter\JwtAuthFilter.class

@@ -1,0 +1,64 @@
+<mat-toolbar class="navbar" color="primary">
+  <!-- Hamburger -->
+  <button mat-icon-button class="hamburger hamburger-btn" (click)="onToggleSidebar()" aria-label="Toggle sidebar">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <!-- Logo / Title -->
+  <a routerLink="/dashboard" class="brand">
+    <mat-icon class="brand-icon">biotech</mat-icon>
+    <span class="brand-text">MedLab</span>
+  </a>
+
+  <span class="spacer"></span>
+
+  <!-- Notification icon (PATIENT only) -->
+  <ng-container *ngIf="role === 'PATIENT'">
+    <button
+      mat-icon-button
+      routerLink="/notifications"
+      aria-label="Notifications"
+      matTooltip="Notifications"
+      class="nav-action"
+    >
+      <mat-icon
+        [matBadge]="(unreadCount$ | async) || null"
+        matBadgeColor="warn"
+        matBadgeSize="small"
+        matBadgeOverlap="true"
+      >notifications</mat-icon>
+    </button>
+  </ng-container>
+
+  <!-- Dark / Light toggle -->
+  <button mat-icon-button (click)="onToggleTheme()" aria-label="Toggle theme" matTooltip="Toggle dark/light mode" class="nav-action">
+    <mat-icon>{{ (isDark$ | async) ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+
+  <!-- Profile chip — click/hover opens dropdown menu -->
+  <div
+    class="user-chip"
+    *ngIf="username"
+    [matMenuTriggerFor]="profileMenu"
+    matTooltip="Account options"
+  >
+    <mat-icon class="user-icon">account_circle</mat-icon>
+    <span class="user-name">{{ username }}</span>
+    <mat-icon class="chevron">expand_more</mat-icon>
+  </div>
+</mat-toolbar>
+
+<!-- Profile dropdown menu -->
+<mat-menu #profileMenu="matMenu" xPosition="before" class="profile-menu">
+  <ng-container *ngIf="role === 'PATIENT'">
+    <button mat-menu-item (click)="onUpdateProfile()">
+      <mat-icon>manage_accounts</mat-icon>
+      <span>Update Profile</span>
+    </button>
+    <mat-divider></mat-divider>
+  </ng-container>
+  <button mat-menu-item (click)="onLogout()" class="logout-item">
+    <mat-icon>logout</mat-icon>
+    <span>Log Out</span>
+  </button>
+</mat-menu>

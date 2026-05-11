@@ -1,0 +1,82 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/orders" matTooltip="Back"><mat-icon>arrow_back</mat-icon></button>
+    <h2>New Lab Order</h2>
+  </div>
+
+  <div *ngIf="loadingTests" class="loading-center">
+    <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+  </div>
+
+  <ng-container *ngIf="!loadingTests">
+    <!-- Test selection -->
+    <div class="section-label">Select Tests</div>
+    <div class="test-grid">
+      <div
+        *ngFor="let t of tests"
+        class="test-card"
+        [class.test-card--selected]="isSelected(t.id)"
+        (click)="toggle(t.id)"
+        role="checkbox"
+        [attr.aria-checked]="isSelected(t.id)">
+
+        <div class="test-card__check">
+          <mat-icon>{{ isSelected(t.id) ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+        </div>
+
+        <div class="test-card__body">
+          <div class="test-card__name">{{ t.name }}</div>
+          <div class="test-card__code text-muted">{{ t.code }}</div>
+          <div *ngIf="t.description" class="test-card__desc text-muted">{{ t.description }}</div>
+        </div>
+
+        <div class="test-card__meta">
+          <span class="test-card__price">₹{{ t.price }}</span>
+          <span class="test-card__tat text-muted"><mat-icon class="tat-icon">schedule</mat-icon>{{ t.turnaroundHours }}h</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Priority -->
+    <div class="section-label" style="margin-top: 24px;">Priority</div>
+    <div class="priority-row">
+      <button
+        *ngFor="let p of ['ROUTINE', 'STAT']"
+        mat-stroked-button
+        [class.priority-btn--active]="priority === p"
+        (click)="priority = p">
+        <mat-icon>{{ p === 'STAT' ? 'priority_high' : 'schedule' }}</mat-icon>
+        {{ p }}
+      </button>
+    </div>
+
+    <!-- Order summary -->
+    <mat-card *ngIf="selectedIds.size > 0" class="summary-card">
+      <mat-card-content>
+        <div class="summary-row">
+          <span>{{ selectedIds.size }} test{{ selectedIds.size > 1 ? 's' : '' }} selected</span>
+          <span class="summary-price">₹{{ totalPrice }}</span>
+        </div>
+        <div class="summary-row text-muted" style="font-size:.85rem">
+          <span>Estimated turnaround</span>
+          <span>{{ maxTurnaround }}h</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Actions -->
+    <div class="action-row">
+      <button mat-stroked-button routerLink="/orders" class="order-action-btn">Cancel</button>
+      <button mat-raised-button color="primary" class="order-action-btn place-order-btn" (click)="submit()"
+              [disabled]="loading || selectedIds.size === 0">
+        <span *ngIf="loading">
+          <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+          Placing Order...
+        </span>
+        <span *ngIf="!loading" class="place-order-content">
+          <mat-icon>science</mat-icon> Place Order
+        </span>
+      </button>
+    </div>
+  </ng-container>
+</div>

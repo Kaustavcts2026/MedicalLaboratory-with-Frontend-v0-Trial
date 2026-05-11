@@ -1,0 +1,13 @@
+{
+  "name": "medlab-e2e",
+  "version": "1.0.0",
+  "description": "MedLab Playwright end-to-end browser tests",
+  "private": true,
+  "scripts": {
+    "test":   "playwright test",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0"
+  }
+}

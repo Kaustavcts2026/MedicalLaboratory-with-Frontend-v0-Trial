@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Changed-Version\" -Force)",
+      "Bash(Select-Object Name, Mode)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\backend\" -Recurse -Directory)",
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\backend\" -Recurse -Filter \"*.java\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\backend\\\\auth-service\\\\\" -Recurse -File | Select-Object -ExpandProperty FullName | head -30)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\backend\\\\lab-processing-service\" -Recurse -File)",
+      "Bash(npx @angular/cli@16 new medlab-frontend --directory frontend --routing true --style scss --skip-git true --skip-tests false --strict false)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\backend\\\\patient_service\" -Recurse -Filter \"*.java\")",
+      "Bash(npx @angular/cli@16 build)",
+      "Bash(Get-ChildItem \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\" -MaxDepth 1)",
+      "Bash(Select-Object Name, LastWriteTime)",
+      "Bash(Format-Table -AutoSize)",
+      "PowerShell($lines = Get-Content 'C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\start-all.ps1' -Encoding UTF8; $lines[578..588] | ForEach-Object -Begin {$i=579} -Process { Write-Host \"L$i`: $_\"; $i++ })",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\backend\\\\\" -Recurse -Directory | Select-Object -ExpandProperty FullName | head -50)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\backend\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(dir \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\frontend\\\\src\\\\app\\\\core\\\\components\" -Recurse -Filter \"sidebar.component.html\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\2485797\\\\Downloads\\\\Medical-Laboratory-System-Original-Version\\\\frontend\" -Recurse -Filter \"*theme*\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -First 20)",
+      "Bash(grep -E \"\\\\.\\(html|ts\\)$\")",
+      "Bash(npm install *)"
+    ]
+  }
+}

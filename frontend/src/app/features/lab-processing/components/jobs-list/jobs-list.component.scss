@@ -1,0 +1,33 @@
+.page-container { max-width: var(--page-width-list); margin: 0 auto; }
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  h2 { margin: 0; font-size: 1.5rem; font-weight: 700; }
+}
+
+.filter-field { width: 100%; margin-bottom: 8px; }
+
+.loading-center { display: flex; justify-content: center; padding: var(--loading-padding); }
+
+// Status badges
+.st-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-badge);
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  white-space: nowrap;
+}
+
+.st--created    { background: #ede7f6; color: #4527a0; }
+.st--received   { background: #e3f2fd; color: #1565c0; }
+.st--processing { background: #f3e5f5; color: #6a1b9a; }
+.st--qc         { background: #fff8e1; color: #f57f17; }
+.st--done       { background: #e8f5e9; color: #2e7d32; }
+.st--cancelled  { background: #ffebee; color: #c62828; }
+.st--entered    { background: #e0f7fa; color: #00838f; }

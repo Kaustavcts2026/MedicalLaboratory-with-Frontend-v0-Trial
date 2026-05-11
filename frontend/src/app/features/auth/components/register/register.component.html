@@ -1,0 +1,88 @@
+<div class="auth-page">
+
+  <!-- ── Left branding panel ───────────────────────────────────────────────── -->
+  <div class="auth-branding">
+    <div class="auth-blob auth-blob--1"></div>
+    <div class="auth-blob auth-blob--2"></div>
+    <div class="auth-blob auth-blob--3"></div>
+
+    <div class="auth-brand-content">
+      <div class="auth-brand-logo">
+        <div class="auth-brand-icon-wrap"><mat-icon>biotech</mat-icon></div>
+        <span class="auth-brand-name">MedLab</span>
+      </div>
+      <h2 class="auth-brand-headline">Join thousands of<br>patients already on board.</h2>
+      <p class="auth-brand-sub">Create your patient account in under a minute and start ordering lab tests today.</p>
+      <ul class="auth-brand-features">
+        <li><mat-icon>check_circle</mat-icon> Free patient account — no hidden fees</li>
+        <li><mat-icon>check_circle</mat-icon> Real-time order & sample tracking</li>
+        <li><mat-icon>check_circle</mat-icon> Receive instant result notifications</li>
+        <li><mat-icon>check_circle</mat-icon> Download hospital-grade PDF reports</li>
+      </ul>
+      <p class="auth-brand-tagline">Trusted · Accredited · ISO 15189 Compliant</p>
+    </div>
+  </div>
+
+  <!-- ── Right form panel ──────────────────────────────────────────────────── -->
+  <div class="auth-form-side">
+    <mat-card class="auth-card">
+
+      <div class="auth-card-header">
+        <div class="auth-card-icon"><mat-icon>person_add</mat-icon></div>
+        <h1 class="auth-card-title">Create account</h1>
+        <p class="auth-card-subtitle">Start your MedLab patient journey</p>
+      </div>
+
+      <mat-card-content class="auth-form-area">
+
+        <div *ngIf="error" class="error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ error }}</span>
+        </div>
+        <div *ngIf="success" class="success-banner">
+          <mat-icon>check_circle_outline</mat-icon>
+          <span>{{ success }}</span>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="off">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Username</mat-label>
+            <mat-icon matPrefix>person_outline</mat-icon>
+            <input matInput formControlName="username" placeholder="Choose a username" autocomplete="username" />
+            <mat-error *ngIf="form.get('username')?.hasError('required')">Username is required</mat-error>
+            <mat-error *ngIf="form.get('username')?.hasError('minlength')">At least 3 characters</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+            <mat-label>Password</mat-label>
+            <mat-icon matPrefix>lock_outline</mat-icon>
+            <input matInput [type]="hidePassword ? 'password' : 'text'"
+              formControlName="password" placeholder="Create a strong password" autocomplete="new-password" />
+            <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword"
+                    [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-hint>Min 8 chars, 1 uppercase, 1 digit</mat-hint>
+            <mat-error *ngIf="form.get('password')?.hasError('required')">Password is required</mat-error>
+            <mat-error *ngIf="form.get('password')?.hasError('pattern')">Min 8 chars, 1 uppercase letter, 1 digit</mat-error>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit"
+                  class="full-width auth-submit-btn" [disabled]="loading">
+            <mat-progress-spinner *ngIf="loading" diameter="20" mode="indeterminate"></mat-progress-spinner>
+            <span *ngIf="!loading"><mat-icon>person_add</mat-icon> Create Account</span>
+          </button>
+
+        </form>
+
+        <div class="auth-footer">
+          <span class="text-muted">Already have an account?</span>
+          <a routerLink="/auth/login" class="auth-link">Sign in</a>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+</div>

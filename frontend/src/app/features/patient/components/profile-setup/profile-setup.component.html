@@ -1,0 +1,98 @@
+<div class="setup-page" *ngIf="!checking">
+  <mat-card class="setup-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar color="primary">person_add</mat-icon>
+      <mat-card-title>Complete Your Profile</mat-card-title>
+      <mat-card-subtitle>Please fill in your details to get started</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="third-width">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" />
+            <mat-error *ngIf="form.get('firstName')?.hasError('required')">Required</mat-error>
+            <mat-error *ngIf="form.get('firstName')?.hasError('pattern')">Letters only</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="third-width">
+            <mat-label>Middle Name <span class="optional-label">(optional)</span></mat-label>
+            <input matInput formControlName="middleName" />
+            <mat-error *ngIf="form.get('middleName')?.hasError('pattern')">Letters only</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="third-width">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" />
+            <mat-error *ngIf="form.get('lastName')?.hasError('required')">Required</mat-error>
+            <mat-error *ngIf="form.get('lastName')?.hasError('pattern')">Letters only</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Age</mat-label>
+            <input matInput type="text" inputmode="numeric" maxlength="3" formControlName="age" (input)="onAgeInput($event)" />
+            <mat-error *ngIf="form.get('age')?.hasError('required')">Required</mat-error>
+            <mat-error *ngIf="form.get('age')?.hasError('patientAge')">Enter an age from 1 to 120</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Gender</mat-label>
+            <mat-select formControlName="gender">
+              <mat-option value="Male">Male</mat-option>
+              <mat-option value="Female">Female</mat-option>
+              <mat-option value="Other">Other</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('gender')?.hasError('required')">Required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput type="email" formControlName="email" />
+          <mat-error *ngIf="form.get('email')?.hasError('required')">Required</mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('patientEmail')">Enter a valid email with a domain</mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('emailDomainTypo')">
+            Check the domain. Did you mean {{ form.get('email')?.getError('emailDomainTypo') }}?
+          </mat-error>
+        </mat-form-field>
+
+        <div class="phone-row">
+          <mat-form-field appearance="outline" class="country-code-field">
+            <mat-label>Code</mat-label>
+            <mat-select formControlName="countryCode">
+              <mat-option *ngFor="let c of countryCodes" [value]="c.code">
+                {{ c.flag }} {{ c.code }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="phone-field">
+            <mat-label>Phone Number</mat-label>
+            <mat-icon matPrefix>phone</mat-icon>
+            <input matInput formControlName="phoneNumber" inputmode="numeric"
+                   (input)="onPhoneInput($event)" maxlength="10" />
+            <mat-error *ngIf="form.get('phoneNumber')?.hasError('required')">Required</mat-error>
+            <mat-error *ngIf="form.get('phoneNumber')?.hasError('pattern')">Enter 10-digit number</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="address-row">
+          <mat-form-field appearance="outline" class="address-field">
+            <mat-label>Address</mat-label>
+            <mat-icon matPrefix>location_on</mat-icon>
+            <textarea matInput formControlName="address" rows="2"></textarea>
+            <mat-error *ngIf="form.get('address')?.hasError('required')">Required</mat-error>
+          </mat-form-field>
+          <button mat-stroked-button type="button" class="map-btn" (click)="openMapPicker()" matTooltip="Pick on map">
+            <mat-icon>location_on</mat-icon>
+          </button>
+        </div>
+
+        <button mat-raised-button color="primary" type="submit" class="full-width submit-btn" [disabled]="loading">
+          <mat-progress-spinner *ngIf="loading" diameter="20" mode="indeterminate"></mat-progress-spinner>
+          <span *ngIf="!loading">Save Profile &amp; Continue</span>
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

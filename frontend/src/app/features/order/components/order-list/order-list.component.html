@@ -1,0 +1,88 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>{{ role === 'ADMIN' ? 'All Orders' : 'My Orders' }}</h2>
+    <button *ngIf="role === 'PATIENT'" mat-raised-button color="primary" (click)="newOrder()">
+      <mat-icon>add</mat-icon> New Order
+    </button>
+  </div>
+
+  <!-- LAB_TECH redirect card -->
+  <mat-card *ngIf="labTechView" class="info-card">
+    <mat-card-content class="info-content">
+      <mat-icon color="accent">science</mat-icon>
+      <h3>Order management is not available for Lab Technicians</h3>
+      <p>Use the <strong>Lab Jobs</strong> queue to view and process assigned samples.</p>
+      <button mat-raised-button color="accent" routerLink="/lab">Go to Lab Jobs</button>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="!labTechView">
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search orders</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput #orderFilter (input)="applyFilter($event)" placeholder="Order number, status…" />
+        <button *ngIf="orderFilter.value" mat-icon-button matSuffix matTooltip="Clear"
+          (click)="orderFilter.value = ''; clearFilter()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <app-skeleton-loader *ngIf="loading" type="table" [rows]="7" [cols]="4"></app-skeleton-loader>
+
+      <div [hidden]="loading" class="table-wrap">
+        <mat-table [dataSource]="dataSource" matSort class="full-width clickable-table">
+
+          <ng-container matColumnDef="orderNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Order #</mat-header-cell>
+            <mat-cell *matCellDef="let o"><strong>{{ o.orderNumber }}</strong></mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="priority">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Priority</mat-header-cell>
+            <mat-cell *matCellDef="let o">
+              <span class="priority-badge" [ngClass]="'priority--' + o.priority?.toLowerCase()">{{ o.priority | statusLabel }}</span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+            <mat-cell *matCellDef="let o">
+              <span class="status-badge" [ngClass]="statusColor(effectiveStatus(o))">{{ effectiveStatus(o) | statusLabel }}</span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let o" class="actions-cell">
+              <button mat-icon-button matTooltip="View details" (click)="viewOrder(o.id); $event.stopPropagation()">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+              <button
+                *ngIf="role === 'PATIENT' && o.status !== 'CANCELLED' && effectiveStatus(o) !== 'RESULT_READY'"
+                mat-icon-button color="warn" matTooltip="Cancel order"
+                (click)="cancelOrder(o.id); $event.stopPropagation()">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"
+                   class="clickable-row"
+                   (click)="viewOrder(row.id)"
+                   matRipple></mat-row>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+              <mat-icon>receipt_long</mat-icon>
+              <span>No orders found.</span>
+            </td>
+          </tr>
+        </mat-table>
+
+        <mat-paginator [pageSizeOptions]="[10,25,50]" showFirstLastButtons></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

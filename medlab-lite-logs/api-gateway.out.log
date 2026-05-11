@@ -1,0 +1,99 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.5)
+
+2026-05-10T13:55:40.780+05:30  INFO 20568 --- [api-gateway] [           main] c.medlab.gateway.ApiGatewayApplication   : Starting ApiGatewayApplication using Java 21.0.10 with PID 20568 (C:\Users\KAUSTAV\Downloads\Medical_Laboratory_Frontend-main\backend\api-gateway\target\api-gateway-0.0.1-SNAPSHOT.jar started by KAUSTAV in C:\Users\KAUSTAV\Downloads\Medical_Laboratory_Frontend-main)
+2026-05-10T13:55:40.810+05:30 DEBUG 20568 --- [api-gateway] [           main] c.medlab.gateway.ApiGatewayApplication   : Running with Spring Boot v4.0.5, Spring v7.0.6
+2026-05-10T13:55:40.813+05:30  INFO 20568 --- [api-gateway] [           main] c.medlab.gateway.ApiGatewayApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-05-10T13:55:41.092+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8888
+2026-05-10T13:55:41.094+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=application, profiles=[default], label=null, version=null, state=null
+2026-05-10T13:55:41.114+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8888
+2026-05-10T13:55:41.116+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=api-gateway, profiles=[default], label=null, version=null, state=null
+2026-05-10T13:55:48.326+05:30  INFO 20568 --- [api-gateway] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=9260835d-b26d-3877-9328-352cd359a65f
+2026-05-10T13:55:56.128+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [After]
+2026-05-10T13:55:56.130+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Before]
+2026-05-10T13:55:56.131+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Between]
+2026-05-10T13:55:56.133+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Cookie]
+2026-05-10T13:55:56.136+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Header]
+2026-05-10T13:55:56.138+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Host]
+2026-05-10T13:55:56.140+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Method]
+2026-05-10T13:55:56.141+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Path]
+2026-05-10T13:55:56.143+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Query]
+2026-05-10T13:55:56.143+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [ReadBody]
+2026-05-10T13:55:56.144+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [RemoteAddr]
+2026-05-10T13:55:56.145+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Version]
+2026-05-10T13:55:56.147+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [XForwardedRemoteAddr]
+2026-05-10T13:55:56.148+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [Weight]
+2026-05-10T13:55:56.151+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.g.r.RouteDefinitionRouteLocator    : Loaded RoutePredicateFactory [CloudFoundryRouteService]
+2026-05-10T13:55:58.047+05:30  INFO 20568 --- [api-gateway] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 4 endpoints beneath base path '/actuator'
+2026-05-10T13:55:59.622+05:30  INFO 20568 --- [api-gateway] [           main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestClient.
+2026-05-10T13:55:59.828+05:30  WARN 20568 --- [api-gateway] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-10T13:56:00.181+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-05-10T13:56:00.376+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-05-10T13:56:00.402+05:30  INFO 20568 --- [api-gateway] [           main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-10T13:56:00.463+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-05-10T13:56:00.465+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-05-10T13:56:00.465+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-05-10T13:56:00.466+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-05-10T13:56:00.466+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-05-10T13:56:00.467+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-05-10T13:56:00.468+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-05-10T13:56:02.227+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-05-10T13:56:02.246+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2026-05-10T13:56:02.256+05:30  INFO 20568 --- [api-gateway] [           main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-10T13:56:02.262+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1778401562261 with initial instances count: 8
+2026-05-10T13:56:02.281+05:30  INFO 20568 --- [api-gateway] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application API-GATEWAY with eureka with status UP
+2026-05-10T13:56:02.285+05:30  INFO 20568 --- [api-gateway] [           main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1778401562285, current=UP, previous=STARTING]
+2026-05-10T13:56:02.292+05:30  INFO 20568 --- [api-gateway] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_API-GATEWAY/LAPTOP-3FP54QTP.mshome.net:api-gateway:8090: registering service...
+2026-05-10T13:56:02.481+05:30 DEBUG 20568 --- [api-gateway] [           main] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T13:56:02.519+05:30  INFO 20568 --- [api-gateway] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_API-GATEWAY/LAPTOP-3FP54QTP.mshome.net:api-gateway:8090 - registration status: 204
+2026-05-10T13:56:02.909+05:30  INFO 20568 --- [api-gateway] [           main] o.s.boot.reactor.netty.NettyWebServer    : Netty started on port 8090 (http)
+2026-05-10T13:56:02.913+05:30  INFO 20568 --- [api-gateway] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8090
+2026-05-10T13:56:02.980+05:30 DEBUG 20568 --- [api-gateway] [           main] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T13:56:02.986+05:30  INFO 20568 --- [api-gateway] [           main] c.medlab.gateway.ApiGatewayApplication   : Started ApiGatewayApplication in 29.244 seconds (process running for 33.153)
+2026-05-10T13:56:02.999+05:30  WARN 20568 --- [api-gateway] [           main] o.s.core.events.SpringDocAppInitializer  : SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-05-10T13:56:03.001+05:30  WARN 20568 --- [api-gateway] [           main] o.s.core.events.SpringDocAppInitializer  : SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-05-10T13:56:32.291+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T13:57:02.325+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T13:57:32.360+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T13:58:02.404+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T13:58:32.442+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T13:59:02.496+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T13:59:32.533+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:00:02.587+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:00:32.624+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:01:00.479+05:30  INFO 20568 --- [api-gateway] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-10T14:01:02.650+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:01:32.677+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:02:02.702+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:02:32.743+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:03:02.823+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:03:32.847+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:04:02.875+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:04:32.907+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:05:02.950+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:05:32.984+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:06:00.491+05:30  INFO 20568 --- [api-gateway] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-10T14:06:03.029+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:06:33.070+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:07:03.106+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:07:33.136+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:08:03.178+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:08:33.213+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:09:03.244+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:09:33.267+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:10:03.292+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:10:33.315+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:11:00.514+05:30  INFO 20568 --- [api-gateway] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-10T14:11:03.352+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:11:33.379+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:12:03.406+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:12:33.434+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:13:03.470+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0
+2026-05-10T14:13:33.494+05:30 DEBUG 20568 --- [api-gateway] [reshExecutor-%d] o.s.c.g.filter.GatewayMetricsFilter      : New routes count: 0

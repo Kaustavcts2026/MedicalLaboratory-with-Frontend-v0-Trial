@@ -1,0 +1,81 @@
+<div class="auth-page">
+
+  <!-- ── Left branding panel ───────────────────────────────────────────────── -->
+  <div class="auth-branding">
+    <div class="auth-blob auth-blob--1"></div>
+    <div class="auth-blob auth-blob--2"></div>
+    <div class="auth-blob auth-blob--3"></div>
+
+    <div class="auth-brand-content">
+      <div class="auth-brand-logo">
+        <div class="auth-brand-icon-wrap"><mat-icon>biotech</mat-icon></div>
+        <span class="auth-brand-name">MedLab</span>
+      </div>
+      <h2 class="auth-brand-headline">Your health results,<br>wherever you are.</h2>
+      <p class="auth-brand-sub">A unified platform for patients, lab technicians, and administrators — built for speed and clarity.</p>
+      <ul class="auth-brand-features">
+        <li><mat-icon>check_circle</mat-icon> Order lab tests with a few clicks</li>
+        <li><mat-icon>check_circle</mat-icon> Track sample status in real time</li>
+        <li><mat-icon>check_circle</mat-icon> Download verified lab reports instantly</li>
+        <li><mat-icon>check_circle</mat-icon> Secure, role-based access control</li>
+      </ul>
+      <p class="auth-brand-tagline">Trusted · Accredited · ISO 15189 Compliant</p>
+    </div>
+  </div>
+
+  <!-- ── Right form panel ──────────────────────────────────────────────────── -->
+  <div class="auth-form-side">
+    <mat-card class="auth-card">
+
+      <div class="auth-card-header">
+        <div class="auth-card-icon"><mat-icon>biotech</mat-icon></div>
+        <h1 class="auth-card-title">Welcome back</h1>
+        <p class="auth-card-subtitle">Sign in to your MedLab account</p>
+      </div>
+
+      <mat-card-content class="auth-form-area">
+
+        <div *ngIf="error" class="error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ error }}</span>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="off">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Username</mat-label>
+            <mat-icon matPrefix>person_outline</mat-icon>
+            <input matInput formControlName="username" placeholder="Enter your username" autocomplete="username" />
+            <mat-error *ngIf="form.get('username')?.hasError('required')">Username is required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <mat-icon matPrefix>lock_outline</mat-icon>
+            <input matInput [type]="hidePassword ? 'password' : 'text'"
+              formControlName="password" placeholder="Enter your password" autocomplete="current-password" />
+            <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword"
+                    [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="form.get('password')?.hasError('required')">Password is required</mat-error>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit"
+                  class="full-width auth-submit-btn" [disabled]="loading">
+            <mat-progress-spinner *ngIf="loading" diameter="20" mode="indeterminate"></mat-progress-spinner>
+            <span *ngIf="!loading"><mat-icon>login</mat-icon> Sign In</span>
+          </button>
+
+        </form>
+
+        <div class="auth-footer">
+          <span class="text-muted">Don't have an account?</span>
+          <a routerLink="/auth/register" class="auth-link">Create account</a>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+</div>

@@ -1,0 +1,199 @@
+<div class="report-page">
+
+  <!-- ── Toolbar (hidden in print/PDF export) ────────────────────────────── -->
+  <div class="report-toolbar no-print">
+    <div class="toolbar-left">
+      <button mat-icon-button (click)="location.back()" matTooltip="Back">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="toolbar-title">Lab Report</span>
+    </div>
+    <div class="toolbar-actions" *ngIf="result">
+      <button mat-stroked-button (click)="printReport()" matTooltip="Print">
+        <mat-icon>print</mat-icon> Print
+      </button>
+      <button mat-raised-button color="primary" (click)="downloadPdf()" [disabled]="downloading">
+        <span *ngIf="downloading">
+          <mat-progress-spinner mode="indeterminate" diameter="18"></mat-progress-spinner>
+          Generating…
+        </span>
+        <span *ngIf="!downloading">
+          <mat-icon>download</mat-icon> Download PDF
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Loading ────────────────────────────────────────────────────────────── -->
+  <mat-card *ngIf="loading" class="no-print">
+    <mat-card-content>
+      <app-skeleton-loader type="list" [rows]="6"></app-skeleton-loader>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- ── No sampleId ─────────────────────────────────────────────────────────── -->
+  <div *ngIf="!loading && !result && sampleId === 0" class="no-result">
+    <mat-icon color="accent">notifications_active</mat-icon>
+    <h3>How to view your lab report</h3>
+    <p>Open a <strong>Lab Result Ready</strong> notification — each one contains a direct link to the report for that sample.</p>
+    <button mat-stroked-button routerLink="/orders">Go to My Orders</button>
+  </div>
+
+  <!-- ── Result not found ─────────────────────────────────────────────────────── -->
+  <div *ngIf="!loading && !result && sampleId > 0" class="no-result">
+    <mat-icon>description_off</mat-icon>
+    <p>No approved result found for sample #{{ sampleId }}.</p>
+    <button mat-stroked-button routerLink="/orders">Back to Orders</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════
+       HOSPITAL-GRADE REPORT DOCUMENT
+       ══════════════════════════════════════════════════════════════════════════ -->
+  <div *ngIf="!loading && result" #reportContent class="report-document">
+
+    <!-- ── Header ───────────────────────────────────────────────────────────── -->
+    <div class="rpt-header">
+      <div class="rpt-brand">
+        <div class="rpt-logo-circle">
+          <span class="rpt-logo-symbol">⚕</span>
+        </div>
+        <div class="rpt-brand-text">
+          <div class="rpt-org-name">MedLab System</div>
+          <div class="rpt-org-sub">Medical Laboratory Information System</div>
+          <div class="rpt-org-meta">Accredited · NABL Certified · ISO 15189</div>
+        </div>
+      </div>
+      <div class="rpt-report-id">
+        <div class="rpt-title">LABORATORY TEST REPORT</div>
+        <table class="rpt-meta-table">
+          <tr>
+            <td class="rpt-meta-label">Report Date</td>
+            <td class="rpt-meta-value">{{ generatedAt | date:'dd MMM yyyy' }}</td>
+          </tr>
+          <tr>
+            <td class="rpt-meta-label">Sample ID</td>
+            <td class="rpt-meta-value rpt-mono">#{{ result.sampleId }}</td>
+          </tr>
+          <tr>
+            <td class="rpt-meta-label">Patient</td>
+            <td class="rpt-meta-value">{{ username }}</td>
+          </tr>
+          <tr>
+            <td class="rpt-meta-label">Report Status</td>
+            <td class="rpt-meta-value">
+              <span class="rpt-status-chip">{{ result.status | statusLabel }}</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="rpt-header-bar"></div>
+
+    <!-- ── Patient & Sample Info strip ─────────────────────────────────────── -->
+    <div class="rpt-info-strip">
+      <div class="rpt-info-cell">
+        <span class="rpt-info-label">PATIENT NAME</span>
+        <span class="rpt-info-val">{{ username }}</span>
+      </div>
+      <div class="rpt-info-divider"></div>
+      <div class="rpt-info-cell">
+        <span class="rpt-info-label">SAMPLE ID</span>
+        <span class="rpt-info-val rpt-mono">#{{ result.sampleId }}</span>
+      </div>
+      <div class="rpt-info-divider"></div>
+      <div class="rpt-info-cell">
+        <span class="rpt-info-label">COLLECTED</span>
+        <span class="rpt-info-val">{{ result.enteredAt | date:'dd MMM yyyy, h:mm a' }}</span>
+      </div>
+      <div class="rpt-info-divider"></div>
+      <div class="rpt-info-cell">
+        <span class="rpt-info-label">REPORT DATE</span>
+        <span class="rpt-info-val">{{ generatedAt | date:'dd MMM yyyy' }}</span>
+      </div>
+    </div>
+
+    <!-- ── Results Section ──────────────────────────────────────────────────── -->
+    <div class="rpt-section">
+      <div class="rpt-section-header">
+        <mat-icon class="rpt-section-icon">science</mat-icon>
+        <span>Test Results</span>
+      </div>
+
+      <!-- Structured JSON result table -->
+      <table *ngIf="parsedResult" class="rpt-results-table">
+        <thead>
+          <tr>
+            <th class="col-param">Parameter</th>
+            <th class="col-value">Result</th>
+            <th class="col-unit">Unit</th>
+            <th class="col-ref">Reference Range</th>
+            <th class="col-status">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of resultEntries; let odd = odd" [class.rpt-row-alt]="odd">
+            <td class="col-param">{{ entry.key }}</td>
+            <td class="col-value rpt-result-val">{{ entry.value }}</td>
+            <td class="col-unit rpt-muted">—</td>
+            <td class="col-ref rpt-muted">—</td>
+            <td class="col-status">
+              <span class="rpt-normal-chip">Normal</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Raw text fallback -->
+      <div *ngIf="!parsedResult" class="rpt-raw">
+        <pre>{{ result.result }}</pre>
+      </div>
+    </div>
+
+    <div class="rpt-divider"></div>
+
+    <!-- ── Interpretation Notice ────────────────────────────────────────────── -->
+    <div class="rpt-notice">
+      <mat-icon class="rpt-notice-icon">info_outline</mat-icon>
+      <p>Results should be interpreted in the clinical context by a qualified healthcare professional. Reference ranges may vary based on age, sex, and laboratory methodology.</p>
+    </div>
+
+    <div class="rpt-divider"></div>
+
+    <!-- ── Authorisation block ──────────────────────────────────────────────── -->
+    <div class="rpt-auth">
+      <div class="rpt-auth-block">
+        <div class="rpt-sig-line"></div>
+        <div class="rpt-sig-label">Authorised Signatory</div>
+        <div class="rpt-sig-sub">Laboratory Director</div>
+      </div>
+      <div class="rpt-auth-block rpt-auth-stamp">
+        <div class="rpt-stamp">
+          <div class="rpt-stamp-inner">
+            <div class="rpt-stamp-line1">VERIFIED</div>
+            <div class="rpt-stamp-line2">MedLab System</div>
+          </div>
+        </div>
+      </div>
+      <div class="rpt-auth-block">
+        <div class="rpt-sig-line"></div>
+        <div class="rpt-sig-label">Quality Officer</div>
+        <div class="rpt-sig-sub">NABL Accredited</div>
+      </div>
+    </div>
+
+    <!-- ── Footer ───────────────────────────────────────────────────────────── -->
+    <div class="rpt-footer">
+      <div class="rpt-footer-bar"></div>
+      <div class="rpt-footer-content">
+        <span>MedLab System · Medical Laboratory Information System</span>
+        <span class="rpt-footer-dot">·</span>
+        <span>This report is electronically generated and valid without signature when digitally authenticated.</span>
+        <span class="rpt-footer-dot">·</span>
+        <span>Report ID: ML-{{ result.sampleId }}-{{ generatedAt | date:'yyyyMMdd' }}</span>
+      </div>
+    </div>
+
+  </div><!-- /.report-document -->
+
+</div><!-- /.report-page -->

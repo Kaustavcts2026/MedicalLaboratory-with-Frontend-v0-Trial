@@ -1,0 +1,110 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Billing &amp; Invoices</h2>
+  </div>
+
+  <!-- Lookup panel — ADMIN / LAB_TECH only -->
+  <mat-card *ngIf="role !== 'PATIENT'" class="lookup-card">
+    <mat-card-content>
+      <p class="text-muted">Look up invoices by Order ID or Patient ID.</p>
+      <div class="lookup-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Order ID</mat-label>
+          <input matInput #orderInput type="number" placeholder="e.g. 42" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="loadByOrderId(+orderInput.value)">
+          <mat-icon>search</mat-icon> Find Invoice
+        </button>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Patient ID</mat-label>
+          <input matInput #patientInput type="number" placeholder="e.g. 5" />
+        </mat-form-field>
+        <button *ngIf="role !== 'LAB_TECH'" mat-stroked-button (click)="loadByPatientId(+patientInput.value)">
+          <mat-icon>person_search</mat-icon> By Patient
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <app-skeleton-loader *ngIf="loading" type="table" [rows]="6" [cols]="5"></app-skeleton-loader>
+
+  <!-- Empty search prompt for non-patient roles -->
+  <mat-card *ngIf="!loading && role !== 'PATIENT' && dataSource.data.length === 0" class="results-card">
+    <mat-card-content class="empty-prompt">
+      <mat-icon>receipt_long</mat-icon>
+      <p class="text-muted">Enter an Order ID or Patient ID above to look up invoices.</p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Results table -->
+  <mat-card [hidden]="dataSource.data.length === 0" class="results-card">
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Filter</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (input)="applyFilter($event)" />
+      </mat-form-field>
+
+      <div class="table-wrap">
+        <mat-table [dataSource]="dataSource" matSort class="full-width clickable-table">
+
+          <ng-container matColumnDef="invoiceNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Invoice #</mat-header-cell>
+            <mat-cell *matCellDef="let i"><strong>{{ i.invoiceNumber }}</strong></mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="orderId">
+            <mat-header-cell *matHeaderCellDef>Order ID</mat-header-cell>
+            <mat-cell *matCellDef="let i">{{ i.orderId }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="amount">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+            <mat-cell *matCellDef="let i"><strong class="amount-val">₹{{ i.amount }}</strong></mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let i">
+              <span class="st-badge" [ngClass]="statusColor(i.status)">{{ i.status | statusLabel }}</span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="dueDate">
+            <mat-header-cell *matHeaderCellDef>Due Date</mat-header-cell>
+            <mat-cell *matCellDef="let i">{{ i.dueDate | date:'mediumDate' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let i" class="actions-cell">
+              <button mat-icon-button matTooltip="View details"
+                (click)="viewInvoice(i.id); $event.stopPropagation()">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+              <button *ngIf="i.status === 'PENDING' && (role === 'PATIENT' || role === 'ADMIN')"
+                mat-icon-button color="primary" matTooltip="Pay now"
+                (click)="pay(i.id); $event.stopPropagation()">
+                <mat-icon>payment</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"
+                   class="clickable-row"
+                   (click)="viewInvoice(row.id)"
+                   matRipple></mat-row>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+              <mat-icon>receipt_long</mat-icon><span>No invoices found.</span>
+            </td>
+          </tr>
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[10,25]" showFirstLastButtons></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

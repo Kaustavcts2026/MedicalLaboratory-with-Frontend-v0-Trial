@@ -1,0 +1,283 @@
+// ── Shared auth-page styles ───────────────────────────────────────────────────
+// Imported by login.component.scss and register.component.scss.
+
+// ── Two-column layout ─────────────────────────────────────────────────────────
+.auth-page {
+  height: 100vh;        // lock to viewport — no outer page scroll ever
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+}
+
+// ── Left branding panel — now white ──────────────────────────────────────────
+.auth-branding {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #dbeeff 0%, #e8f4ff 40%, #eef6ff 70%, #f0f8ff 100%);
+  padding: 48px 40px;
+  height: 100%;
+  border-right: 1px solid #c8dff5;
+
+  @media (max-width: 860px) { display: none; }
+}
+
+// ── Animated blobs — subtle on white ─────────────────────────────────────────
+.auth-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  opacity: .28;
+  animation: auth-float 10s ease-in-out infinite;
+  pointer-events: none;
+
+  &--1 {
+    width: 380px; height: 380px;
+    background: #93c5fd;
+    top: -80px; left: -60px;
+    animation-delay: 0s;
+  }
+  &--2 {
+    width: 300px; height: 300px;
+    background: #67e8f9;
+    bottom: -60px; right: -40px;
+    animation-delay: -4s;
+    animation-direction: alternate-reverse;
+  }
+  &--3 {
+    width: 200px; height: 200px;
+    background: #a5b4fc;
+    top: 55%; left: 50%;
+    animation-delay: -7s;
+  }
+}
+
+@keyframes auth-float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-28px) scale(1.06); }
+}
+
+.auth-brand-content {
+  position: relative;
+  z-index: 1;
+  max-width: 380px;
+}
+
+.auth-brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 36px;
+
+  .auth-brand-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(21,101,192,.1);
+    border: 1px solid rgba(21,101,192,.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon { font-size: 30px; width: 30px; height: 30px; color: #1565c0; }
+  }
+
+  .auth-brand-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: .2px;
+    color: #1565c0;
+  }
+}
+
+.auth-brand-headline {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #0d1b2a;
+  margin: 0 0 12px;
+}
+
+.auth-brand-sub {
+  font-size: .9375rem;
+  color: #5a7184;
+  line-height: 1.6;
+  margin: 0 0 36px;
+}
+
+.auth-brand-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .9rem;
+    color: #3d5a70;
+
+    mat-icon { font-size: 18px; width: 18px; height: 18px; color: #2e7d32; flex-shrink: 0; }
+  }
+}
+
+.auth-brand-tagline {
+  margin-top: 44px;
+  padding-top: 20px;
+  border-top: 1px solid #dde6f0;
+  font-size: .72rem;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  color: #8daabf;
+}
+
+// ── Right form panel — now deep navy, card pops ───────────────────────────────
+.auth-form-side {
+  position: relative;
+  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+
+  background: linear-gradient(155deg, #051535 0%, #0d2b6b 50%, #0a1f55 100%);
+
+  // Soft blob glows via pseudo-elements
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 340px 300px at 85% 8%,  rgba(59,130,246,.22) 0%, transparent 70%),
+      radial-gradient(ellipse 280px 260px at 12% 92%, rgba(6,182,212,.18)  0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 860px) {
+    height: auto;
+    min-height: 100vh;
+    padding: 40px 16px;
+    background: linear-gradient(180deg, #051535 0%, #0d2b6b 100%);
+  }
+}
+
+// ── Auth card ──────────────────────────────────────────────────────────────────
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 20px !important;
+  padding: 8px 4px 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.50), 0 0 0 1px rgba(255,255,255,.07) !important;
+}
+
+// ── Card header ────────────────────────────────────────────────────────────────
+.auth-card-header {
+  text-align: center;
+  padding: 28px 32px 20px;
+
+  .auth-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 16px rgba(21,101,192,.45);
+
+    mat-icon { font-size: 28px; width: 28px; height: 28px; color: #ffffff; }
+  }
+
+  .auth-card-title {
+    margin: 0 0 4px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .auth-card-subtitle {
+    margin: 0;
+    font-size: .875rem;
+    color: var(--text-secondary);
+  }
+}
+
+// ── Form area — breathing room at the sides ───────────────────────────────────
+.auth-form-area {
+  padding: 0 28px;
+}
+
+// ── Banners ────────────────────────────────────────────────────────────────────
+.error-banner,
+.success-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-bottom: 16px;
+  font-size: .875rem;
+  line-height: 1.4;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; }
+}
+
+.error-banner {
+  background: rgba(198,40,40,.1);
+  color: #c62828;
+  border: 1px solid rgba(198,40,40,.2);
+}
+
+.success-banner {
+  background: rgba(46,125,50,.1);
+  color: #2e7d32;
+  border: 1px solid rgba(46,125,50,.2);
+}
+
+:host-context(body.dark-theme) {
+  .error-banner   { background: rgba(198,40,40,.18);  color: #ef9a9a; border-color: rgba(198,40,40,.3); }
+  .success-banner { background: rgba(46,125,50,.18);  color: #a5d6a7; border-color: rgba(46,125,50,.3); }
+}
+
+// ── Submit button ──────────────────────────────────────────────────────────────
+.auth-submit-btn {
+  height: 50px !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  margin-top: 8px;
+  border-radius: var(--radius-button) !important;
+  letter-spacing: .3px;
+}
+
+// ── Footer link ────────────────────────────────────────────────────────────────
+.auth-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+  font-size: .875rem;
+
+  .auth-link {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}

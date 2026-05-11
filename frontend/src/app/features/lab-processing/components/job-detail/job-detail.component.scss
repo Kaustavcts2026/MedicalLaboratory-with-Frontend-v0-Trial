@@ -1,0 +1,9 @@
+.page-container { max-width: 720px; margin: 0 auto; }
+.page-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; h2 { margin: 0; font-size: 1.5rem; font-weight: 700; } }
+.loading-center { display: flex; justify-content: center; padding: 60px; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.detail-item { display: flex; flex-direction: column; gap: 4px; }
+.detail-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .5px; color: var(--text-secondary); }
+.detail-value { font-size: 1rem; }
+.divider { margin: 24px 0; }
+.action-row { display: flex; gap: 12px; flex-wrap: wrap; }

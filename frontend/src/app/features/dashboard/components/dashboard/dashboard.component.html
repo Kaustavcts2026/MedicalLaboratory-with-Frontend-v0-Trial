@@ -1,0 +1,442 @@
+<ng-container *ngIf="!loading; else loadingTpl">
+<div class="dashboard">
+
+  <!-- ── Welcome banner ──────────────────────────────────────────────── -->
+  <div class="welcome-banner">
+    <div class="welcome-text">
+      <h2>{{ greeting }}, <strong>{{ username }}</strong></h2>
+      <p>
+        <span *ngIf="role === 'PATIENT'">Manage your lab orders, results, and billing from one place.</span>
+        <span *ngIf="role === 'LAB_TECH'">Process samples, manage inventory, and enter results.</span>
+        <span *ngIf="role === 'ADMIN'">System overview — orders, lab jobs, inventory, billing, and users.</span>
+      </p>
+    </div>
+    <span [ngClass]="'role-chip role-chip--' + role?.toLowerCase()">
+      <mat-icon class="role-chip-icon">badge</mat-icon>
+      {{ role | statusLabel }}
+    </span>
+  </div>
+
+  <!-- ── Stat tiles ──────────────────────────────────────────────────── -->
+  <div class="stats-row">
+    <a *ngFor="let s of stats" class="stat-tile mat-elevation-z1" [routerLink]="s.route" matRipple>
+      <div class="stat-icon-wrap" [style.background]="s.color + '18'">
+        <mat-icon [style.color]="s.color">{{ s.icon }}</mat-icon>
+      </div>
+      <div class="stat-body">
+        <span class="stat-value">{{ s.value }}</span>
+        <span class="stat-label">{{ s.label }}</span>
+      </div>
+      <mat-icon class="stat-arrow">chevron_right</mat-icon>
+    </a>
+  </div>
+
+  <!-- ══════════════════ ADMIN ══════════════════════════════════════════ -->
+  <ng-container *ngIf="role === 'ADMIN'">
+
+    <div class="section-grid">
+
+      <!-- Results pending approval -->
+      <mat-card class="panel-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar color="warn">task_alt</mat-icon>
+          <mat-card-title>Results Pending Approval</mat-card-title>
+          <mat-card-subtitle>Approve to generate patient invoice</mat-card-subtitle>
+          <span class="spacer"></span>
+          <a mat-stroked-button routerLink="/lab" class="panel-link-btn">View All</a>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="pendingApprovalJobs.length === 0" class="panel-empty">
+            <mat-icon color="primary">check_circle</mat-icon>
+            <span>No results pending approval</span>
+          </div>
+          <table *ngIf="pendingApprovalJobs.length > 0" class="mini-table">
+            <thead>
+              <tr><th>Job</th><th>Sample</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let j of pendingApprovalJobs">
+                <td><strong>#{{ j.id }}</strong></td>
+                <td>#{{ j.sampleId }}</td>
+                <td><span class="st-badge st--entered">Result Entered</span></td>
+                <td class="action-cell">
+                  <a mat-icon-button [routerLink]="['/lab/job', j.id]" matTooltip="View &amp; Approve">
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Low stock alerts -->
+      <mat-card class="panel-card" [class.panel-card--alert]="lowStockItems.length > 0">
+        <mat-card-header>
+          <mat-icon mat-card-avatar [color]="lowStockItems.length > 0 ? 'warn' : 'primary'">inventory_2</mat-icon>
+          <mat-card-title>Low Stock Alerts</mat-card-title>
+          <mat-card-subtitle>{{ lowStockItems.length > 0 ? lowStockItems.length + ' item(s) below threshold' : 'All stock levels adequate' }}</mat-card-subtitle>
+          <span class="spacer"></span>
+          <a mat-stroked-button routerLink="/inventory" class="panel-link-btn">Inventory</a>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="lowStockItems.length === 0" class="panel-empty">
+            <mat-icon color="primary">check_circle</mat-icon>
+            <span>All stock levels are adequate</span>
+          </div>
+          <table *ngIf="lowStockItems.length > 0" class="mini-table">
+            <thead>
+              <tr><th>Item</th><th>Qty</th><th>Unit</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let i of lowStockItems">
+                <td><strong>{{ i.itemName }}</strong></td>
+                <td class="qty-warn">{{ i.quantity }}</td>
+                <td class="text-muted">{{ i.unit }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Test Catalog quick view + Add Test -->
+    <mat-card class="panel-card catalog-panel">
+      <mat-card-header>
+        <mat-icon mat-card-avatar color="primary">biotech</mat-icon>
+        <mat-card-title>Lab Test Catalog</mat-card-title>
+        <mat-card-subtitle>{{ recentTests.length }} test(s) — click any card to edit</mat-card-subtitle>
+        <span class="spacer"></span>
+        <a mat-raised-button color="primary" routerLink="/inventory/tests/new" class="panel-link-btn">
+          <mat-icon>add</mat-icon> Add Test
+        </a>
+        <a mat-stroked-button routerLink="/inventory/tests" class="panel-link-btn">View All</a>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="recentTests.length === 0" class="panel-empty">
+          <mat-icon color="accent">science</mat-icon>
+          <span>No tests in catalog yet — <a routerLink="/inventory/tests/new">add the first test</a></span>
+        </div>
+        <div class="test-grid">
+          <a *ngFor="let t of recentTests" class="test-card mat-elevation-z1"
+             [routerLink]="['/inventory/tests', t.id, 'edit']">
+            <div class="test-card-top">
+              <code class="test-code">{{ t.code }}</code>
+              <mat-icon class="test-edit-icon">edit</mat-icon>
+            </div>
+            <strong class="test-name">{{ t.name }}</strong>
+            <span class="test-meta">₹{{ t.price }} &bull; {{ t.turnaroundHours }}h TAT</span>
+          </a>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Inventory overview + Add Item -->
+    <mat-card class="panel-card catalog-panel">
+      <mat-card-header>
+        <mat-icon mat-card-avatar color="primary">inventory_2</mat-icon>
+        <mat-card-title>Inventory</mat-card-title>
+        <mat-card-subtitle>{{ totalInventoryCount }} item(s) — low stock shown first</mat-card-subtitle>
+        <span class="spacer"></span>
+        <a mat-raised-button color="primary" routerLink="/inventory" [queryParams]="{ add: 'true' }" class="panel-link-btn">
+          <mat-icon>add</mat-icon> Add Item
+        </a>
+        <a mat-stroked-button routerLink="/inventory" class="panel-link-btn">View All</a>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="allInventoryItems.length === 0" class="panel-empty">
+          <mat-icon color="accent">inventory_2</mat-icon>
+          <span>No inventory items yet</span>
+        </div>
+        <div class="inv-grid">
+          <div *ngFor="let i of allInventoryItems" class="inv-card mat-elevation-z1" [class.inv-card--low]="i.lowStock">
+            <div class="inv-card-top">
+              <span class="inv-qty">{{ i.quantity }}<span class="inv-unit"> {{ i.unit }}</span></span>
+              <span *ngIf="i.lowStock" class="inv-status inv-status--low">Low</span>
+              <span *ngIf="!i.lowStock" class="inv-status inv-status--ok">OK</span>
+            </div>
+            <strong class="inv-name">{{ i.itemName }}</strong>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Admin quick actions -->
+    <h3 class="section-title">Quick Actions</h3>
+    <div class="quick-grid">
+      <a routerLink="/orders"          class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#1565c018"><mat-icon style="color:#1565c0">list_alt</mat-icon></div>
+        <span class="quick-label">All Orders</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/lab"             class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#2e7d3218"><mat-icon style="color:#2e7d32">biotech</mat-icon></div>
+        <span class="quick-label">Lab Jobs</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/inventory"       class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#e6510018"><mat-icon style="color:#e65100">inventory_2</mat-icon></div>
+        <span class="quick-label">Inventory</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/inventory/tests" class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#6a1b9a18"><mat-icon style="color:#6a1b9a">science</mat-icon></div>
+        <span class="quick-label">Test Catalog</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/billing"         class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#00838f18"><mat-icon style="color:#00838f">receipt_long</mat-icon></div>
+        <span class="quick-label">Billing</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/admin"           class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#c6282818"><mat-icon style="color:#c62828">admin_panel_settings</mat-icon></div>
+        <span class="quick-label">User Management</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+    </div>
+
+  </ng-container>
+
+  <!-- ══════════════════ LAB_TECH ═══════════════════════════════════════ -->
+  <ng-container *ngIf="role === 'LAB_TECH'">
+
+    <div class="section-grid">
+
+      <!-- Active jobs -->
+      <mat-card class="panel-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar color="primary">biotech</mat-icon>
+          <mat-card-title>Active Jobs</mat-card-title>
+          <mat-card-subtitle>Jobs currently in the pipeline</mat-card-subtitle>
+          <span class="spacer"></span>
+          <a mat-stroked-button routerLink="/lab" class="panel-link-btn">All Jobs</a>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="activeJobs.length === 0" class="panel-empty">
+            <mat-icon color="primary">check_circle</mat-icon>
+            <span>No active jobs right now</span>
+          </div>
+          <table *ngIf="activeJobs.length > 0" class="mini-table">
+            <thead>
+              <tr><th>Sample</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let j of activeJobs">
+                <td>Sample #{{ j.sampleId }}</td>
+                <td><span class="st-badge" [ngClass]="jobStatusColor(j.status)">{{ j.status | statusLabel }}</span></td>
+                <td class="action-cell">
+                  <a mat-icon-button [routerLink]="['/lab/job', j.id]" [state]="{ job: j }" matTooltip="Open Job">
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Low stock -->
+      <mat-card class="panel-card" [class.panel-card--alert]="lowStockItems.length > 0">
+        <mat-card-header>
+          <mat-icon mat-card-avatar [color]="lowStockItems.length > 0 ? 'warn' : 'primary'">inventory_2</mat-icon>
+          <mat-card-title>Low Stock Alerts</mat-card-title>
+          <span class="spacer"></span>
+          <a mat-stroked-button routerLink="/inventory" class="panel-link-btn">Inventory</a>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="lowStockItems.length === 0" class="panel-empty">
+            <mat-icon color="primary">check_circle</mat-icon>
+            <span>All stock levels adequate</span>
+          </div>
+          <table *ngIf="lowStockItems.length > 0" class="mini-table">
+            <thead><tr><th>Item</th><th>Qty &amp; Unit</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let i of lowStockItems">
+                <td><strong>{{ i.itemName }}</strong></td>
+                <td class="qty-warn">{{ i.quantity }} {{ i.unit }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Test catalog (read-only for lab tech) -->
+    <mat-card class="panel-card catalog-panel">
+      <mat-card-header>
+        <mat-icon mat-card-avatar color="primary">biotech</mat-icon>
+        <mat-card-title>Available Tests</mat-card-title>
+        <mat-card-subtitle>Lab test catalog reference</mat-card-subtitle>
+        <span class="spacer"></span>
+        <a mat-stroked-button routerLink="/inventory/tests" class="panel-link-btn">Full Catalog</a>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="test-grid">
+          <div *ngFor="let t of recentTests" class="test-card mat-elevation-z1">
+            <div class="test-card-top">
+              <code class="test-code">{{ t.code }}</code>
+            </div>
+            <strong class="test-name">{{ t.name }}</strong>
+            <span class="test-meta">₹{{ t.price }} &bull; {{ t.turnaroundHours }}h TAT</span>
+          </div>
+        </div>
+        <p *ngIf="recentTests.length === 0" class="panel-empty">
+          <mat-icon color="accent">science</mat-icon>
+          <span>No tests in catalog yet</span>
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Lab tech quick actions -->
+    <h3 class="section-title">Quick Actions</h3>
+    <div class="quick-grid">
+      <a routerLink="/lab"             class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#1565c018"><mat-icon style="color:#1565c0">biotech</mat-icon></div>
+        <span class="quick-label">Lab Jobs</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/inventory"       class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#e6510018"><mat-icon style="color:#e65100">inventory_2</mat-icon></div>
+        <span class="quick-label">Inventory</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/inventory/tests" class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#6a1b9a18"><mat-icon style="color:#6a1b9a">science</mat-icon></div>
+        <span class="quick-label">Test Catalog</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/billing"         class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#00838f18"><mat-icon style="color:#00838f">receipt_long</mat-icon></div>
+        <span class="quick-label">Billing</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+    </div>
+
+  </ng-container>
+
+  <!-- ══════════════════ PATIENT ════════════════════════════════════════ -->
+  <ng-container *ngIf="role === 'PATIENT'">
+
+    <!-- ── Patient showcase (tagline + image marquee) ── -->
+    <div class="patient-showcase">
+      <p class="showcase-tagline">{{ tagline }}</p>
+      <div class="marquee-outer">
+        <div class="marquee-track">
+          <img *ngFor="let img of marqueeImages; trackBy: trackByImg"
+               [src]="img" alt="Lab showcase" class="marquee-img" />
+        </div>
+      </div>
+    </div>
+
+    <!-- New order CTA banner -->
+    <div class="cta-banner">
+      <div>
+        <h3>Ready for a new lab test?</h3>
+        <p>Browse available tests and place an order in minutes.</p>
+      </div>
+      <a mat-raised-button color="accent" routerLink="/orders/new">
+        <mat-icon>add</mat-icon> Place New Order
+      </a>
+    </div>
+
+    <div class="section-grid">
+
+      <!-- Recent orders -->
+      <mat-card class="panel-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar color="primary">science</mat-icon>
+          <mat-card-title>Recent Orders</mat-card-title>
+          <span class="spacer"></span>
+          <a mat-stroked-button routerLink="/orders" class="panel-link-btn">All Orders</a>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="recentOrders.length === 0" class="panel-empty">
+            <mat-icon color="accent">science</mat-icon>
+            <span>No orders yet — <a routerLink="/orders/new">place your first order</a></span>
+          </div>
+          <table *ngIf="recentOrders.length > 0" class="mini-table">
+            <thead>
+              <tr><th>Order #</th><th>Priority</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let o of recentOrders">
+                <td><strong>{{ o.orderNumber }}</strong></td>
+                <td><span class="priority-badge" [ngClass]="'priority--' + o.priority?.toLowerCase()">{{ o.priority | statusLabel }}</span></td>
+                <td><span class="status-badge" [ngClass]="orderStatusColor(o.status)">{{ o.status | statusLabel }}</span></td>
+                <td class="action-cell">
+                  <a mat-icon-button [routerLink]="['/orders', o.id]" matTooltip="View Details">
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Pending invoices -->
+      <mat-card class="panel-card" [class.panel-card--alert]="pendingInvoices.length > 0">
+        <mat-card-header>
+          <mat-icon mat-card-avatar [color]="pendingInvoices.length > 0 ? 'warn' : 'primary'">receipt_long</mat-icon>
+          <mat-card-title>Pending Invoices</mat-card-title>
+          <mat-card-subtitle>{{ pendingInvoices.length > 0 ? pendingInvoices.length + ' payment(s) due' : 'No outstanding payments' }}</mat-card-subtitle>
+          <span class="spacer"></span>
+          <a mat-stroked-button routerLink="/billing" class="panel-link-btn">All Billing</a>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="pendingInvoices.length === 0" class="panel-empty">
+            <mat-icon color="primary">check_circle</mat-icon>
+            <span>No pending invoices</span>
+          </div>
+          <table *ngIf="pendingInvoices.length > 0" class="mini-table">
+            <thead>
+              <tr><th>Invoice</th><th>Amount</th><th>Due</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let i of pendingInvoices">
+                <td><strong>{{ i.invoiceNumber }}</strong></td>
+                <td class="amount-cell">₹{{ i.amount }}</td>
+                <td>{{ i.dueDate | date:'mediumDate' }}</td>
+                <td class="action-cell">
+                  <a mat-raised-button color="primary" [routerLink]="['/billing/pay', i.id]" class="pay-btn">Pay</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Patient quick actions -->
+    <h3 class="section-title">Quick Actions</h3>
+    <div class="quick-grid">
+      <a routerLink="/orders/new"      class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#1565c018"><mat-icon style="color:#1565c0">add_circle</mat-icon></div>
+        <span class="quick-label">New Order</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/orders"          class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#2e7d3218"><mat-icon style="color:#2e7d32">science</mat-icon></div>
+        <span class="quick-label">My Orders</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/billing"         class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#e6510018"><mat-icon style="color:#e65100">receipt_long</mat-icon></div>
+        <span class="quick-label">Billing</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/notifications"   class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#6a1b9a18"><mat-icon style="color:#6a1b9a">notifications</mat-icon></div>
+        <span class="quick-label">
+          Notifications
+          <span *ngIf="unreadCount > 0" class="notif-badge">{{ unreadCount }}</span>
+        </span>
+        <mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+      <a routerLink="/patient/profile" class="quick-card mat-elevation-z1" matRipple>
+        <div class="quick-icon-wrap" style="background:#00838f18"><mat-icon style="color:#00838f">person</mat-icon></div>
+        <span class="quick-label">My Profile</span><mat-icon class="quick-arrow">chevron_right</mat-icon>
+      </a>
+    </div>
+
+  </ng-container>
+
+</div>
+</ng-container>
+
+<ng-template #loadingTpl>
+  <div class="dash-skeleton">
+    <!-- stat tiles placeholder -->
+    <app-skeleton-loader type="card" [rows]="3"></app-skeleton-loader>
+    <!-- panel cards placeholder -->
+    <app-skeleton-loader type="card" [rows]="2"></app-skeleton-loader>
+  </div>
+</ng-template>

@@ -1,0 +1,41 @@
+<div class="fab-wrapper" *ngIf="role === 'PATIENT'">
+  <button
+    mat-fab
+    color="primary"
+    [matMenuTriggerFor]="profileMenu"
+    class="profile-fab"
+    aria-label="User profile"
+    matTooltip="Profile & Account"
+    matTooltipPosition="left"
+  >
+    <mat-icon>account_circle</mat-icon>
+  </button>
+
+  <mat-menu #profileMenu="matMenu" xPosition="before" yPosition="above">
+    <div class="menu-header">
+      <mat-icon class="menu-avatar">account_circle</mat-icon>
+      <div>
+        <div class="menu-username">{{ username }}</div>
+        <div class="menu-role">{{ role }}</div>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+
+    <ng-container *ngIf="role === 'PATIENT'">
+      <button mat-menu-item (click)="viewProfile()">
+        <mat-icon>person</mat-icon>
+        <span>View Profile</span>
+      </button>
+      <button mat-menu-item (click)="editProfile()">
+        <mat-icon>edit</mat-icon>
+        <span>Edit Profile</span>
+      </button>
+      <mat-divider></mat-divider>
+    </ng-container>
+
+    <button mat-menu-item (click)="logout()" class="logout-item">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
+</div>

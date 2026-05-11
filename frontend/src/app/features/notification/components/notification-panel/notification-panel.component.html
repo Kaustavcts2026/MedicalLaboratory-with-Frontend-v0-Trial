@@ -1,0 +1,51 @@
+<div class="page-container">
+  <div class="page-header">
+    <mat-icon color="primary">notifications</mat-icon>
+    <h2>Notifications
+      <span *ngIf="unreadCount > 0" class="unread-chip">{{ unreadCount }} unread</span>
+    </h2>
+    <span class="spacer"></span>
+    <button *ngIf="unreadCount > 0" mat-stroked-button (click)="markAllRead()">
+      <mat-icon>done_all</mat-icon> Mark all read
+    </button>
+  </div>
+
+  <div *ngIf="notifications.length === 0" class="empty-state">
+    <mat-icon class="empty-icon">notifications_none</mat-icon>
+    <p>No notifications yet</p>
+  </div>
+
+  <ng-container *ngFor="let group of groupedNotifications; trackBy: trackByLabel">
+    <div class="group-label">{{ group.label }}</div>
+
+    <div class="notif-list">
+      <div
+        *ngFor="let n of group.items; trackBy: trackById"
+        [class.unread]="!n.isRead"
+        [class.notif-lab-result]="n.type === 'LAB_RESULT'"
+        [class.expanded]="expandedId === n.id"
+        class="notif-item"
+        (click)="toggleExpand(n)">
+
+        <div class="notif-row">
+          <mat-icon class="notif-icon" [color]="n.type === 'LAB_RESULT' ? 'accent' : (n.isRead ? '' : 'primary')">
+            {{ n.type === 'LAB_RESULT' ? 'science' : (n.isRead ? 'notifications_none' : 'notifications_active') }}
+          </mat-icon>
+          <div class="notif-body">
+            <div class="notif-message" [class.notif-message--clamp]="expandedId !== n.id">{{ n.message }}</div>
+            <div class="notif-time text-muted">{{ n.createdAt | date:'shortTime' }}</div>
+          </div>
+          <div class="notif-meta">
+            <a *ngIf="n.type === 'LAB_RESULT'" mat-icon-button
+               matTooltip="View your orders to access the full lab report"
+               [routerLink]="['/orders']" (click)="$event.stopPropagation()">
+              <mat-icon>article</mat-icon>
+            </a>
+            <span *ngIf="!n.isRead" class="unread-dot"></span>
+            <mat-icon class="expand-icon">{{ expandedId === n.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

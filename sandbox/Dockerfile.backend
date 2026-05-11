@@ -1,0 +1,71 @@
+FROM maven:3.9-eclipse-temurin-21-alpine AS builder
+
+WORKDIR /app
+
+COPY backend/pom.xml backend/pom.xml
+
+COPY backend/server/pom.xml backend/server/pom.xml
+COPY backend/config-server/pom.xml backend/config-server/pom.xml
+COPY backend/api-gateway/pom.xml backend/api-gateway/pom.xml
+COPY backend/auth-service/pom.xml backend/auth-service/pom.xml
+COPY backend/order-service/pom.xml backend/order-service/pom.xml
+COPY backend/inventory-service/inventory-service/pom.xml backend/inventory-service/inventory-service/pom.xml
+COPY backend/lab-processing-service/lps/pom.xml backend/lab-processing-service/lps/pom.xml
+COPY backend/billing-service/pom.xml backend/billing-service/pom.xml
+COPY backend/patient_service/pom.xml backend/patient_service/pom.xml
+COPY backend/Notification_service/pom.xml backend/Notification_service/pom.xml
+
+RUN mvn -f backend/pom.xml install -DskipTests -N -q
+
+COPY backend/server/src backend/server/src
+RUN mvn -f backend/server/pom.xml package -DskipTests -q
+
+COPY backend/config-server/src backend/config-server/src
+RUN mvn -f backend/config-server/pom.xml package -DskipTests -q
+
+COPY backend/api-gateway/src backend/api-gateway/src
+RUN mvn -f backend/api-gateway/pom.xml package -DskipTests -q
+
+COPY backend/auth-service/src backend/auth-service/src
+RUN mvn -f backend/auth-service/pom.xml package -DskipTests -q
+
+COPY backend/order-service/src backend/order-service/src
+RUN mvn -f backend/order-service/pom.xml package -DskipTests -q
+
+COPY backend/inventory-service/inventory-service/src backend/inventory-service/inventory-service/src
+RUN mvn -f backend/inventory-service/inventory-service/pom.xml package -DskipTests -q
+
+COPY backend/lab-processing-service/lps/src backend/lab-processing-service/lps/src
+RUN mvn -f backend/lab-processing-service/lps/pom.xml package -DskipTests -q
+
+COPY backend/billing-service/src backend/billing-service/src
+RUN mvn -f backend/billing-service/pom.xml package -DskipTests -q
+
+COPY backend/patient_service/src backend/patient_service/src
+RUN mvn -f backend/patient_service/pom.xml package -DskipTests -q
+
+COPY backend/Notification_service/src backend/Notification_service/src
+RUN mvn -f backend/Notification_service/pom.xml package -DskipTests -q
+
+FROM eclipse-temurin:21-jre-alpine
+RUN apk add --no-cache curl bash
+
+WORKDIR /app
+
+COPY --from=builder /app/backend/server/target/*.jar server.jar
+COPY --from=builder /app/backend/config-server/target/*.jar config-server.jar
+COPY --from=builder /app/backend/api-gateway/target/*.jar api-gateway.jar
+COPY --from=builder /app/backend/auth-service/target/*.jar auth-service.jar
+COPY --from=builder /app/backend/order-service/target/*.jar order-service.jar
+COPY --from=builder /app/backend/inventory-service/inventory-service/target/*.jar inventory-service.jar
+COPY --from=builder /app/backend/lab-processing-service/lps/target/*.jar lab-processing-service.jar
+COPY --from=builder /app/backend/billing-service/target/*.jar billing-service.jar
+COPY --from=builder /app/backend/patient_service/target/*.jar patient-service.jar
+COPY --from=builder /app/backend/Notification_service/target/*.jar notification-service.jar
+
+COPY sandbox/start-services.sh start-services.sh
+RUN chmod +x start-services.sh
+
+EXPOSE 8761 8888 8081 8082 8083 8084 8085 8086 8087 8090
+
+CMD ["./start-services.sh"]

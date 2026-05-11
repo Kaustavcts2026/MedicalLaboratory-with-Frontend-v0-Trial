@@ -1,0 +1,62 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <button mat-icon-button routerLink="/inventory"><mat-icon>arrow_back</mat-icon></button>
+      <h2>Lab Test Catalog</h2>
+    </div>
+    <button *ngIf="role === 'ADMIN'" mat-raised-button color="primary" (click)="addNew()">
+      <mat-icon>add</mat-icon> Add Test
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search tests</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (input)="applyFilter($event)" placeholder="Name, code…" />
+      </mat-form-field>
+
+      <app-skeleton-loader *ngIf="loading" type="table" [rows]="7" [cols]="5"></app-skeleton-loader>
+
+      <div [hidden]="loading">
+      <mat-table [dataSource]="dataSource" matSort class="full-width">
+        <ng-container matColumnDef="code">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Code</mat-header-cell>
+          <mat-cell *matCellDef="let t"><code class="test-code">{{ t.code }}</code></mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+          <mat-cell *matCellDef="let t"><strong>{{ t.name }}</strong></mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="price">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Price</mat-header-cell>
+          <mat-cell *matCellDef="let t">₹{{ t.price }}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="turnaroundHours">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>TAT</mat-header-cell>
+          <mat-cell *matCellDef="let t">{{ t.turnaroundHours }}h</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
+          <mat-cell *matCellDef="let t" class="text-muted">{{ t.description }}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell *matCellDef="let t">
+            <button *ngIf="role === 'ADMIN'" mat-icon-button matTooltip="Edit" (click)="edit(t.id)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell no-data" colspan="6">No tests found.</td>
+        </tr>
+      </mat-table>
+      <mat-paginator [pageSizeOptions]="[10,25,50]" showFirstLastButtons></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

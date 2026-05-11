@@ -1,0 +1,55 @@
+.setup-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg-page);
+}
+
+.setup-card {
+  width: 100%;
+  max-width: 560px;
+  border-radius: 16px !important;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  .half-width { flex: 1; }
+  .third-width { flex: 1; min-width: 0; }
+}
+
+.optional-label { font-size: 0.75rem; opacity: 0.6; }
+
+.phone-row {
+  display: flex;
+  gap: 8px;
+  .country-code-field { width: 110px; flex-shrink: 0; }
+  .phone-field { flex: 1; }
+}
+
+.address-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  .address-field { flex: 1; }
+}
+
+.map-btn {
+  margin-top: 4px;
+  min-width: 48px;
+  width: 48px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 8px !important;
+  mat-icon { font-size: 22px; }
+}
+
+.submit-btn {
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 8px;
+  border-radius: 8px !important;
+}

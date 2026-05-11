@@ -1,0 +1,20 @@
+CREATE DATABASE IF NOT EXISTS auth_db
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE DATABASE IF NOT EXISTS patient_db
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE DATABASE IF NOT EXISTS inventory_db
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE DATABASE IF NOT EXISTS billing
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  
+CREATE DATABASE IF NOT EXISTS medlab
+	CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    
+CREATE DATABASE IF NOT EXISTS lab_processing
+	CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    
+CREATE DATABASE IF NOT EXISTS notification_db
+	CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

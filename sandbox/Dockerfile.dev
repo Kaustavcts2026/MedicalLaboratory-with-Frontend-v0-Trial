@@ -1,0 +1,16 @@
+FROM eclipse-temurin:21-jdk-alpine
+
+RUN apk add --no-cache \
+    maven \
+    nodejs \
+    npm \
+    curl \
+    bash \
+    git \
+    nano \
+    unzip \
+    mysql \
+    mysql-client \
+    openrc
+
+RUN rc-status || true

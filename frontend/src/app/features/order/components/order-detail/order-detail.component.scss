@@ -1,0 +1,30 @@
+.page-container { max-width: var(--page-width-detail); margin: 0 auto; }
+.page-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; h2 { margin: 0; font-size: 1.5rem; font-weight: 700; } }
+.loading-center { display: flex; justify-content: center; padding: var(--loading-padding); }
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  @media (max-width: 600px) { grid-template-columns: 1fr; gap: 12px; }
+}
+.detail-item { display: flex; flex-direction: column; gap: 4px; }
+.detail-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .5px; color: var(--text-secondary); }
+.detail-value { font-size: 1rem; }
+.action-row { margin-top: 24px; display: flex; gap: 12px; }
+.no-data { text-align: center; padding: 24px; color: var(--text-secondary); }
+
+// ── Status / priority badges (mirrored from order-list) ──────────────────────
+.status-badge, .priority-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: .75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+.status--pending   { background: #fff3e0; color: #e65100; }
+.status--collected { background: #e3f2fd; color: #1565c0; }
+.status--cancelled { background: #ffebee; color: #c62828; }
+.priority--routine { background: #e8f5e9; color: #2e7d32; }
+.priority--stat    { background: #ffebee; color: #c62828; }

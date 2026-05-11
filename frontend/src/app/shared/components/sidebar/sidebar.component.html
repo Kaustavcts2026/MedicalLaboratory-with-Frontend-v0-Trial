@@ -1,0 +1,34 @@
+<aside class="sidebar" [class.sidebar--open]="open" aria-label="Navigation sidebar">
+  <!-- Header — close button hidden on desktop where sidebar is always visible -->
+  <div class="sidebar-header">
+    <span class="sidebar-title">Navigation</span>
+    <button mat-icon-button (click)="onClose()" aria-label="Close sidebar" class="sidebar-close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Nav links -->
+  <nav class="sidebar-nav">
+    <a
+      *ngFor="let link of visibleLinks"
+      class="sidebar-link"
+      [routerLink]="link.route"
+      routerLinkActive="sidebar-link--active"
+      (click)="navigate(link.route)"
+      matRipple
+    >
+      <mat-icon class="sidebar-link-icon">{{ link.icon }}</mat-icon>
+      <span>{{ link.label }}</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <mat-divider></mat-divider>
+    <button class="sidebar-link logout-btn" (click)="logout()" matRipple>
+      <mat-icon class="sidebar-link-icon">logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </div>
+</aside>

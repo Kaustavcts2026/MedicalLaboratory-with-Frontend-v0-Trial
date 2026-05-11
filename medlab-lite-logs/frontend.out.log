@@ -1,0 +1,41 @@
+
+Initial Chunk Files                                         | Names                                         |  Raw Size
+vendor.js                                                   | vendor                                        |   6.33 MB |
+styles.css, styles.js                                       | styles                                        | 323.10 kB |
+polyfills.js                                                | polyfills                                     | 252.55 kB |
+main.js                                                     | main                                          | 124.97 kB |
+runtime.js                                                  | runtime                                       |  14.14 kB |
+
+| Initial Total                                 |   7.03 MB
+
+Lazy Chunk Files                                            | Names                                         |  Raw Size
+node_modules_jspdf_dist_jspdf_es_min_js.js                  | jspdf                                         | 855.89 kB |
+src_app_features_patient_patient_module_ts.js               | features-patient-patient-module               | 555.31 kB |
+node_modules_canvg_lib_index_es_js.js                       | canvg                                         | 434.13 kB |
+node_modules_html2canvas_dist_html2canvas_js.js             | html2canvas                                   | 377.67 kB |
+src_app_features_lab-processing_lab-processing_module_ts.js | features-lab-processing-lab-processing-module | 129.51 kB |
+src_app_features_dashboard_dashboard_module_ts.js           | features-dashboard-dashboard-module           | 127.79 kB |
+src_app_features_inventory_inventory_module_ts.js           | features-inventory-inventory-module           |  92.31 kB |
+src_app_features_order_order_module_ts.js                   | features-order-order-module                   |  91.53 kB |
+src_app_features_billing_billing_module_ts.js               | features-billing-billing-module               |  78.75 kB |
+node_modules_dompurify_dist_purify_es_mjs.js                | dompurify                                     |  67.86 kB |
+src_app_features_admin_admin_module_ts.js                   | features-admin-admin-module                   |  57.73 kB |
+src_app_features_auth_auth_module_ts.js                     | features-auth-auth-module                     |  50.68 kB |
+src_app_features_notification_notification_module_ts.js     | features-notification-notification-module     |  25.86 kB |
+common.js                                                   | common                                        |  11.07 kB |
+
+Build at: 2026-05-10T08:30:09.152Z - Hash: 831da5a6e5af5ebd - Time: 149903ms
+
+** Angular Live Development Server is listening on 0.0.0.0:4200, open your browser on http://localhost:4200/ **
+
+
+√ Compiled successfully.
+
+Initial Chunk Files | Names   | Raw Size
+runtime.js          | runtime | 14.14 kB |
+
+18 unchanged chunks
+
+Build at: 2026-05-10T08:30:22.025Z - Hash: 5f4f27e463a196a3 - Time: 9911ms
+
+√ Compiled successfully.

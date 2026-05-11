@@ -1,0 +1,68 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/lab"><mat-icon>arrow_back</mat-icon></button>
+    <h2>Enter Lab Result</h2>
+  </div>
+
+  <!-- BUG-06: testId lost on page refresh — show recovery state instead of submitting testId=0 -->
+  <mat-card *ngIf="badTestId">
+    <mat-card-content class="info-content" style="text-align:center;padding:32px 16px;">
+      <mat-icon color="warn" style="font-size:48px;width:48px;height:48px;">link_off</mat-icon>
+      <h3 style="margin:16px 0 8px">Context lost</h3>
+      <p class="text-muted">Please navigate to this page from a job in the Lab queue — direct links and page refreshes are not supported.</p>
+      <button mat-raised-button color="primary" routerLink="/lab">Go to Lab Jobs</button>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="!badTestId">
+    <mat-card-content>
+      <!-- UX-02: show test context so the technician knows what they are recording -->
+      <div class="detail-grid" style="margin-bottom:16px;">
+        <div class="detail-item">
+          <span class="detail-label">Sample ID</span>
+          <span class="detail-value"><strong>#{{ sampleId }}</strong></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Test</span>
+          <span class="detail-value"><strong>{{ testName || ('Test #' + testId) }}</strong></span>
+        </div>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+      <p class="hint text-muted">Add result fields below. Each field will appear as a row in the patient report.</p>
+      <div class="result-fields">
+        <div class="field-row" *ngFor="let field of resultFields; let i = index; trackBy: trackByIndex">
+          <mat-form-field appearance="outline" class="field-key">
+            <mat-label>Parameter</mat-label>
+            <input matInput [(ngModel)]="field.key" [ngModelOptions]="{standalone: true}" placeholder="e.g. Hemoglobin">
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="field-value">
+            <mat-label>Value</mat-label>
+            <input matInput [(ngModel)]="field.value" [ngModelOptions]="{standalone: true}" placeholder="e.g. 13.5 g/dL">
+          </mat-form-field>
+          <button mat-icon-button type="button" (click)="removeField(i)" class="remove-btn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <button mat-stroked-button type="button" (click)="addField()" class="add-field-btn">
+          <mat-icon>add</mat-icon> Add Field
+        </button>
+      </div>
+      <input type="hidden" formControlName="result">
+
+        <div class="action-row">
+          <button mat-stroked-button type="button" routerLink="/lab">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading || !hasValidField">
+            <span *ngIf="loading">
+              <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+              Saving...
+            </span>
+            <span *ngIf="!loading">
+              <mat-icon>save</mat-icon> Submit Result
+            </span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

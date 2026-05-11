@@ -1,0 +1,68 @@
+[
+    {
+        "name":  "eureka",
+        "pid":  21512,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\eureka.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\eureka.err.log"
+    },
+    {
+        "name":  "config-server",
+        "pid":  8164,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\config-server.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\config-server.err.log"
+    },
+    {
+        "name":  "auth-service",
+        "pid":  11500,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\auth-service.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\auth-service.err.log"
+    },
+    {
+        "name":  "patient-service",
+        "pid":  24444,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\patient-service.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\patient-service.err.log"
+    },
+    {
+        "name":  "inventory-service",
+        "pid":  3616,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\inventory-service.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\inventory-service.err.log"
+    },
+    {
+        "name":  "order-service",
+        "pid":  13332,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\order-service.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\order-service.err.log"
+    },
+    {
+        "name":  "lab-processing-service",
+        "pid":  22000,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\lab-processing-service.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\lab-processing-service.err.log"
+    },
+    {
+        "name":  "notification-service",
+        "pid":  25764,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\notification-service.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\notification-service.err.log"
+    },
+    {
+        "name":  "billing-service",
+        "pid":  28368,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\billing-service.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\billing-service.err.log"
+    },
+    {
+        "name":  "api-gateway",
+        "pid":  20568,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\api-gateway.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\api-gateway.err.log"
+    },
+    {
+        "name":  "frontend",
+        "pid":  27976,
+        "stdout":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\frontend.out.log",
+        "stderr":  "C:\\Users\\KAUSTAV\\Downloads\\Medical_Laboratory_Frontend-main\\medlab-lite-logs\\frontend.err.log"
+    }
+]

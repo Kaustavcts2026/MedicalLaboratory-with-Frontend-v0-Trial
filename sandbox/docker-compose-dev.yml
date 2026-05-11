@@ -1,0 +1,45 @@
+services:
+  dev:
+    build:
+      context: ..
+      dockerfile: sandbox/Dockerfile.dev
+    image: medlab-dev:latest
+    ports:
+      - "4200:4200"
+      - "8761:8761"
+      - "8888:8888"
+      - "8090:8090"
+      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"
+      - "8084:8084"
+      - "8085:8085"
+      - "8086:8086"
+      - "8087:8087"
+
+    volumes:
+      - ..:/app
+    working_dir: /app
+    command: tail -f /dev/null
+    depends_on:
+      mysql:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  mysql:
+    image: mysql:9.1.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "13306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  mysql_data:

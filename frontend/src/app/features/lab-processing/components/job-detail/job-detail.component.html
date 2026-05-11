@@ -1,0 +1,41 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/lab"><mat-icon>arrow_back</mat-icon></button>
+    <h2>Job Details</h2>
+  </div>
+
+  <mat-card *ngIf="loading">
+    <mat-card-content>
+      <app-skeleton-loader type="list" [rows]="4"></app-skeleton-loader>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="!loading && job">
+    <mat-card-content>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">Job ID</span><span class="detail-value">{{ job.id }}</span></div>
+        <div class="detail-item"><span class="detail-label">Sample ID</span><span class="detail-value">{{ job.sampleId }}</span></div>
+        <div class="detail-item"><span class="detail-label">Test</span><span class="detail-value">{{ testName || ('Test #' + job.testId) }}</span></div>
+        <div class="detail-item"><span class="detail-label">Status</span><span class="detail-value"><strong>{{ job.status | statusLabel }}</strong></span></div>
+        <div class="detail-item"><span class="detail-label">Created</span><span class="detail-value">{{ job.createdAt | date:'medium' }}</span></div>
+        <div class="detail-item" *ngIf="job.startedAt"><span class="detail-label">Started</span><span class="detail-value">{{ job.startedAt | date:'medium' }}</span></div>
+        <div class="detail-item" *ngIf="job.completedAt"><span class="detail-label">Completed</span><span class="detail-value">{{ job.completedAt | date:'medium' }}</span></div>
+      </div>
+
+      <mat-divider class="divider"></mat-divider>
+
+      <div class="action-row">
+        <ng-container *ngIf="role === 'LAB_TECH'">
+          <button *ngIf="job.status === 'SAMPLE_RECEIVED'" mat-raised-button color="primary" (click)="start()"><mat-icon>play_arrow</mat-icon> Start Processing</button>
+          <button *ngIf="job.status === 'IN_PROCESS'" mat-raised-button color="accent" (click)="markQC()"><mat-icon>verified</mat-icon> Mark QC Pending</button>
+          <button *ngIf="job.status === 'QC_PENDING'" mat-raised-button color="primary" (click)="complete()"><mat-icon>check_circle</mat-icon> Complete Job</button>
+          <button *ngIf="job.status === 'COMPLETED'" mat-raised-button color="primary" (click)="enterResult()"><mat-icon>edit_note</mat-icon> Enter Result</button>
+        </ng-container>
+        <ng-container *ngIf="role === 'ADMIN'">
+          <button *ngIf="job.status === 'ENTERED'" mat-raised-button color="primary" (click)="approveResult()"><mat-icon>task_alt</mat-icon> Approve Result</button>
+          <button *ngIf="job.status !== 'CANCELLED' && job.status !== 'COMPLETED' && job.status !== 'ENTERED'" mat-raised-button color="warn" (click)="cancel()"><mat-icon>cancel</mat-icon> Cancel Job</button>
+        </ng-container>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

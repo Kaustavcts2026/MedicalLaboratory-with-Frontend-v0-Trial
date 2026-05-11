@@ -1,0 +1,86 @@
+image: docker.io/library/devcontainer:classroom
+
+tasks:
+  - name: Build Backend
+    before: |
+      cd /workspace
+      mvn -f backend/pom.xml clean package -DskipTests -q
+    waitFor: ~
+    runAt: null
+
+  - name: Start MySQL
+    before: |
+      docker run -d --name medlab-mysql \
+        -p 3306:3306 \
+        -e MYSQL_ROOT_PASSWORD=root \
+        mysql:9.1
+      sleep 10
+      docker exec medlab-mysql mysql -uroot -proot -e "
+        CREATE DATABASE IF NOT EXISTS patient_db;
+        CREATE DATABASE IF NOT EXISTS inventory_db;
+        CREATE DATABASE IF NOT EXISTS billing;
+        CREATE DATABASE IF NOT EXISTS medlab;
+        CREATE DATABASE IF NOT EXISTS lab_processing;
+        CREATE DATABASE IF NOT EXISTS notification_db;
+      "
+    waitFor: Build Backend
+    runAt: null
+
+ports:
+  - port: 3306
+    onOpen: ignore
+  - port: 8761
+    onOpen: open-browser
+    name: Eureka Dashboard
+  - port: 8888
+    onOpen: ignore
+  - port: 8090
+    onOpen: open-browser
+    name: API Gateway / Swagger
+  - port: 8081
+    onOpen: ignore
+  - port: 8082
+    onOpen: ignore
+  - port: 8083
+    onOpen: ignore
+  - port: 8084
+    onOpen: ignore
+  - port: 8085
+    onOpen: ignore
+  - port: 8086
+    onOpen: ignore
+  - port: 8087
+    onOpen: ignore
+  - port: 4200
+    onOpen: open-browser
+    name: Angular Frontend
+
+vscode:
+  extensions:
+    - vscjava.vscode-java-pack
+    - vmware.vscode-boot-dev-pack
+    - angular.ng-template
+    - ms-azuretools.vscode-docker
+
+checkoutLocation: /workspace
+
+init: |
+  echo "=== MedLab Gitpod Environment ==="
+  cd /workspace
+  echo "Installing additional tools..."
+  npm install -g @angular/cli@16 2>/dev/null || true
+  echo "Done!"
+
+command: |
+  echo "=== MedLab Ready ==="
+  echo ""
+  echo "Run the following to build and start:"
+  echo "  bash .devcontainer/start-all.sh"
+  echo ""
+  echo "Or step by step:"
+  echo "  1. bash .devcontainer/start-all.sh    (MySQL + backend)"
+  echo "  2. cd frontend && npm start           (frontend)"
+  echo ""
+  echo "Access points:"
+  echo "  Swagger UI:  http://localhost:8090/swagger-ui.html"
+  echo "  Eureka:      http://localhost:8761"

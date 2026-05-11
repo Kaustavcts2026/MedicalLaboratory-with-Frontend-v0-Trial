@@ -1,0 +1,1 @@
+SELECT username, type, message FROM notification_db.notification WHERE type = 'ORDER_PLACED';

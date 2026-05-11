@@ -1,0 +1,123 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/billing"><mat-icon>arrow_back</mat-icon></button>
+    <h2>Make Payment</h2>
+  </div>
+
+  <!-- Fetching invoice -->
+  <app-skeleton-loader *ngIf="fetching" type="card" [rows]="3"></app-skeleton-loader>
+
+  <ng-container *ngIf="!fetching && invoice">
+
+    <!-- ── STEP 1: Form ─────────────────────────────────────────────────────── -->
+    <ng-container *ngIf="step === 'form'">
+
+      <!-- Amount hero -->
+      <mat-card class="amount-hero-card">
+        <mat-card-content class="amount-hero">
+          <div class="amount-hero-label">Amount Due</div>
+          <div class="amount-hero-value">₹{{ invoice.amount | number:'1.2-2' }}</div>
+          <div class="amount-hero-meta">
+            <span>{{ invoice.invoiceNumber }}</span>
+            <span class="dot">·</span>
+            <span>Due {{ invoice.dueDate | date:'mediumDate' }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Payment method selector -->
+      <mat-card class="payment-card">
+        <mat-card-header><mat-card-title>Payment Method</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="form">
+            <div class="method-options">
+              <label *ngFor="let m of methods" class="method-option"
+                     [class.method-option--active]="form.get('paymentMethod')?.value === m"
+                     (click)="form.get('paymentMethod')?.setValue(m)">
+                <mat-icon>{{ methodIcons[m] }}</mat-icon>
+                <span>{{ methodLabels[m] }}</span>
+                <mat-icon class="check-icon">check_circle</mat-icon>
+              </label>
+            </div>
+            <p *ngIf="isCardMethod" class="method-hint">
+              <mat-icon>info_outline</mat-icon>
+              Card payments are capped at ₹40,000 per transaction
+            </p>
+          </form>
+        </mat-card-content>
+        <mat-card-actions class="card-actions">
+          <button mat-stroked-button routerLink="/billing">Cancel</button>
+          <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="review()">
+            Review Payment <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </ng-container>
+
+    <!-- ── STEP 2: Confirm ──────────────────────────────────────────────────── -->
+    <ng-container *ngIf="step === 'confirm'">
+      <mat-card class="confirm-card">
+        <mat-card-content class="confirm-content">
+          <div class="confirm-icon-wrap">
+            <mat-icon>lock_outline</mat-icon>
+          </div>
+          <h3 class="confirm-title">Confirm Your Payment</h3>
+          <p class="confirm-sub text-muted">Review the details below before authorising</p>
+
+          <div class="confirm-detail-rows">
+            <div class="confirm-row">
+              <span class="text-muted">Invoice</span>
+              <strong>{{ invoice.invoiceNumber }}</strong>
+            </div>
+            <div class="confirm-row">
+              <span class="text-muted">Method</span>
+              <span class="method-pill">
+                <mat-icon>{{ selectedMethodIcon }}</mat-icon>
+                {{ selectedMethodLabel }}
+              </span>
+            </div>
+            <div class="confirm-row confirm-row--amount">
+              <span class="text-muted">Total</span>
+              <span class="confirm-amount">₹{{ invoice.amount | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <div class="confirm-actions">
+            <button mat-stroked-button (click)="goBack()" [disabled]="loading">
+              <mat-icon>arrow_back</mat-icon> Change
+            </button>
+            <button mat-raised-button color="primary" (click)="pay()" [disabled]="loading">
+              <span *ngIf="loading" class="btn-loading">
+                <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+                Processing…
+              </span>
+              <span *ngIf="!loading">
+                <mat-icon>lock</mat-icon>
+                Pay ₹{{ invoice.amount | number:'1.2-2' }}
+              </span>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </ng-container>
+
+    <!-- ── STEP 3: Success ─────────────────────────────────────────────────── -->
+    <ng-container *ngIf="step === 'success'">
+      <mat-card class="success-card">
+        <mat-card-content class="success-content">
+          <div class="success-icon-wrap">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <h2 class="success-title">Payment Successful!</h2>
+          <p class="success-amount">₹{{ invoice.amount | number:'1.2-2' }}</p>
+          <p class="text-muted">{{ invoice.invoiceNumber }} · {{ selectedMethodLabel }}</p>
+          <p class="text-muted success-note">A receipt has been recorded against your account.</p>
+          <button mat-raised-button color="primary" class="success-btn" (click)="viewInvoices()">
+            <mat-icon>receipt_long</mat-icon> View Invoices
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </ng-container>
+
+  </ng-container>
+</div>

@@ -1,0 +1,1 @@
+SELECT invoice_id, amount_paid, payment_method, transaction_id, status, paid_at FROM billing.payments;

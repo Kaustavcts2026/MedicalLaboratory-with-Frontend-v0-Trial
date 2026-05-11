@@ -1,0 +1,20 @@
+<nav *ngIf="(breadcrumbs$ | async) as crumbs" class="breadcrumb-nav" aria-label="Breadcrumb">
+  <ng-container *ngIf="crumbs.length > 0">
+    <ol class="breadcrumb-list">
+      <li class="breadcrumb-item breadcrumb-item--home">
+        <a routerLink="/dashboard" class="breadcrumb-link" matRipple>
+          <mat-icon>home</mat-icon>
+        </a>
+      </li>
+      <li class="breadcrumb-sep"><mat-icon>chevron_right</mat-icon></li>
+
+      <ng-container *ngFor="let crumb of crumbs; let last = last; trackBy: trackByUrl">
+        <li class="breadcrumb-item" [class.breadcrumb-item--active]="last">
+          <a *ngIf="!last" [routerLink]="crumb.url" class="breadcrumb-link" matRipple>{{ crumb.label }}</a>
+          <span *ngIf="last" class="breadcrumb-current">{{ crumb.label }}</span>
+        </li>
+        <li *ngIf="!last" class="breadcrumb-sep"><mat-icon>chevron_right</mat-icon></li>
+      </ng-container>
+    </ol>
+  </ng-container>
+</nav>

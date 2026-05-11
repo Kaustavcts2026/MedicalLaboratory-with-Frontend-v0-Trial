@@ -1,0 +1,106 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Lab Processing Jobs</h2>
+    <button mat-icon-button matTooltip="Refresh" (click)="load()"><mat-icon>refresh</mat-icon></button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput #jobFilter (input)="applyFilter($event)" placeholder="Sample ID, status…" />
+        <button *ngIf="jobFilter.value" mat-icon-button matSuffix matTooltip="Clear"
+          (click)="jobFilter.value = ''; clearFilter()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <app-skeleton-loader *ngIf="loading" type="table" [rows]="7" [cols]="5"></app-skeleton-loader>
+
+      <div [hidden]="loading" class="table-wrap">
+        <mat-table [dataSource]="dataSource" matSort class="full-width clickable-table">
+
+          <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Job ID</mat-header-cell>
+            <mat-cell *matCellDef="let j">{{ j.id }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="sampleId">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Sample ID</mat-header-cell>
+            <mat-cell *matCellDef="let j">{{ j.sampleId }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="testName">
+            <mat-header-cell *matHeaderCellDef>Test</mat-header-cell>
+            <mat-cell *matCellDef="let j">{{ testName(j.testId) }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+            <mat-cell *matCellDef="let j">
+              <span class="st-badge" [ngClass]="statusColor(j.status)">{{ j.status | statusLabel }}</span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="createdAt">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Created</mat-header-cell>
+            <mat-cell *matCellDef="let j">{{ j.createdAt | date:'short' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let j" class="actions-cell">
+              <button mat-icon-button matTooltip="View" (click)="viewJob(j); $event.stopPropagation()">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+              <button *ngIf="role === 'LAB_TECH' && (j.status === 'CREATED' || j.status === 'SAMPLE_RECEIVED')"
+                mat-icon-button color="primary" matTooltip="Start Job"
+                (click)="startJob(j.id); $event.stopPropagation()">
+                <mat-icon>play_arrow</mat-icon>
+              </button>
+              <button *ngIf="role === 'LAB_TECH' && j.status === 'IN_PROCESS'"
+                mat-icon-button color="accent" matTooltip="Mark QC"
+                (click)="markQC(j.id); $event.stopPropagation()">
+                <mat-icon>verified</mat-icon>
+              </button>
+              <button *ngIf="role === 'LAB_TECH' && j.status === 'QC_PENDING'"
+                mat-icon-button color="primary" matTooltip="Complete"
+                (click)="completeJob(j.id); $event.stopPropagation()">
+                <mat-icon>check_circle</mat-icon>
+              </button>
+              <button *ngIf="role === 'LAB_TECH' && j.status === 'COMPLETED'"
+                mat-icon-button matTooltip="Enter Result"
+                (click)="enterResult(j); $event.stopPropagation()">
+                <mat-icon>edit_note</mat-icon>
+              </button>
+              <button *ngIf="role === 'ADMIN' && j.status === 'ENTERED'"
+                mat-icon-button color="primary" matTooltip="Approve Result"
+                (click)="approveResult(j); $event.stopPropagation()">
+                <mat-icon>task_alt</mat-icon>
+              </button>
+              <button *ngIf="role === 'ADMIN' && j.status !== 'CANCELLED' && j.status !== 'COMPLETED' && j.status !== 'ENTERED'"
+                mat-icon-button color="warn" matTooltip="Cancel"
+                (click)="cancelJob(j.id); $event.stopPropagation()">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"
+                   class="clickable-row"
+                   (click)="viewJob(row)"
+                   matRipple></mat-row>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+              <mat-icon>biotech</mat-icon><span>No jobs found.</span>
+            </td>
+          </tr>
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[10,25,50]" showFirstLastButtons></mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
